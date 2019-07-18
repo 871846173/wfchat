@@ -1,10 +1,7 @@
 package cn.wildfirechat.app;
 
 
-import cn.wildfirechat.app.pojo.ConfirmSessionRequest;
-import cn.wildfirechat.app.pojo.CreateSessionRequest;
-import cn.wildfirechat.app.pojo.LoginResponse;
-import cn.wildfirechat.app.pojo.SessionOutput;
+import cn.wildfirechat.app.pojo.*;
 import cn.wildfirechat.common.ErrorCode;
 import cn.wildfirechat.pojos.InputOutputUserInfo;
 import cn.wildfirechat.pojos.OutputCreateUser;
@@ -12,6 +9,7 @@ import cn.wildfirechat.pojos.OutputGetIMTokenData;
 import cn.wildfirechat.sdk.ChatConfig;
 import cn.wildfirechat.sdk.UserAdmin;
 import cn.wildfirechat.sdk.model.IMResult;
+import com.cloopen.rest.sdk.CCPRestSDK;
 import com.github.qcloudsms.SmsSingleSender;
 import com.github.qcloudsms.SmsSingleSenderResult;
 import com.github.qcloudsms.httpclient.HTTPException;
@@ -20,9 +18,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
+import sun.misc.BASE64Decoder;
+import sun.misc.BASE64Encoder;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -34,6 +39,7 @@ public class ServiceImpl implements Service {
     static class Count {
         long count;
         long startTime;
+
         void reset() {
             count = 1;
             startTime = System.currentTimeMillis();
@@ -52,6 +58,7 @@ public class ServiceImpl implements Service {
             return true;
         }
     }
+
     private static final Logger LOG = LoggerFactory.getLogger(ServiceImpl.class);
     private static ConcurrentHashMap<String, Record> mRecords = new ConcurrentHashMap<>();
     private static ConcurrentHashMap<String, PCSession> mPCSession = new ConcurrentHashMap<>();
@@ -63,6 +70,10 @@ public class ServiceImpl implements Service {
 
     @Autowired
     private IMConfig mIMConfig;
+    @Autowired
+    private UserDao userDao;
+    @Autowired
+    private CollectionDao collectionDao;
 
     @PostConstruct
     private void init() {
@@ -71,51 +82,82 @@ public class ServiceImpl implements Service {
 
     @Override
     public RestResult sendCode(String mobile) {
-        try {
-            if (!Utils.isMobile(mobile)) {
-                LOG.error("Not valid mobile {}", mobile);
-                return RestResult.error(RestResult.RestCode.ERROR_INVALID_MOBILE);
-            }
-
-            Record record = mRecords.get(mobile);
-            if (record != null && System.currentTimeMillis() - record.getTimestamp() < 60 * 1000) {
-                LOG.error("Send code over frequency. timestamp {}, now {}", record.getTimestamp(), System.currentTimeMillis());
-                return RestResult.error(RestResult.RestCode.ERROR_SEND_SMS_OVER_FREQUENCY);
-            }
-            Count count = mCounts.get(mobile);
-            if (count == null) {
-                count = new Count();
-                mCounts.put(mobile, count);
-            }
-
-            if (!count.increaseAndCheck()) {
-                LOG.error("Count check failure, already send {} messages today", count.count);
-                return RestResult.error(RestResult.RestCode.ERROR_SEND_SMS_OVER_FREQUENCY);
-            }
-
-            String code = Utils.getRandomCode(4);
-            String[] params = {code};
-            SmsSingleSender ssender = new SmsSingleSender(mSMSConfig.appid, mSMSConfig.appkey);
-            SmsSingleSenderResult result = ssender.sendWithParam("86", mobile,
-                    mSMSConfig.templateId, params, null, "", "");
-            if (result.result == 0) {
-                mRecords.put(mobile, new Record(code, mobile));
-                return RestResult.ok(null);
-            } else {
-                LOG.error("Failure to send SMS {}", result);
-                return RestResult.error(RestResult.RestCode.ERROR_SERVER_ERROR);
-            }
-        } catch (HTTPException e) {
-            // HTTP响应码错误
-            e.printStackTrace();
-        } catch (JSONException e) {
-            // json解析错误
-            e.printStackTrace();
-        } catch (IOException e) {
-            // 网络IO错误
-            e.printStackTrace();
+//        try {
+        if (!Utils.isMobile(mobile)) {
+            LOG.error("Not valid mobile {}", mobile);
+            return RestResult.error(RestResult.RestCode.ERROR_INVALID_MOBILE);
         }
-        return RestResult.error(RestResult.RestCode.ERROR_SERVER_ERROR);
+
+        Record record = mRecords.get(mobile);
+        if (record != null && System.currentTimeMillis() - record.getTimestamp() < 60 * 1000) {
+            LOG.error("Send code over frequency. timestamp {}, now {}", record.getTimestamp(), System.currentTimeMillis());
+            return RestResult.error(RestResult.RestCode.ERROR_SEND_SMS_OVER_FREQUENCY);
+        }
+        Count count = mCounts.get(mobile);
+        if (count == null) {
+            count = new Count();
+            mCounts.put(mobile, count);
+        }
+
+        if (!count.increaseAndCheck()) {
+            LOG.error("Count check failure, already send {} messages today", count.count);
+            return RestResult.error(RestResult.RestCode.ERROR_SEND_SMS_OVER_FREQUENCY);
+        }
+
+        String code = Utils.getRandomCode(4);
+        String[] params = {code};
+//        new String[]{code,"5"}
+        HashMap<String, Object> result = null;
+        //初始化sdk
+        CCPRestSDK restAPI = new CCPRestSDK();
+        // 初始化服务器地址和端口，格式如下，服务器地址不需要写https://
+        restAPI.init(mSMSConfig.serverip, mSMSConfig.serverport);
+        // 初始化主帐号和主帐号TOKEN
+        restAPI.setAccount(mSMSConfig.accountsid, mSMSConfig.accounttoken);
+        // 初始化应用ID
+        restAPI.setAppId(mSMSConfig.appid);
+        //模板Id，不带此参数查询全部可用模板
+        result = restAPI.sendTemplateSMS(mobile, mSMSConfig.templateId, params);
+        System.out.println("QuerySMSTemplate result=" + result);
+        if ("000000".equals(result.get("statusCode"))) {
+            //正常返回输出data包体信息（map）
+            HashMap<String, Object> data = (HashMap<String, Object>) result.get("data");
+            Set<String> keySet = data.keySet();
+            for (String key : keySet) {
+                Object object = data.get(key);
+                System.out.println(key + " = " + object);
+            }
+            mRecords.put(mobile, new Record(code, mobile));
+            return RestResult.ok(null);
+        } else {
+            //异常返回输出错误码和错误信息
+            System.out.println("错误码=" + result.get("statusCode") + " 错误信息= " + result.get("statusMsg"));
+            LOG.error("Failure to send SMS {}", result);
+            return RestResult.error(RestResult.RestCode.ERROR_SERVER_ERROR);
+        }
+
+        //腾讯短信平台
+//            SmsSingleSender ssender = new SmsSingleSender(mSMSConfig.appid, mSMSConfig.appkey);
+//            SmsSingleSenderResult result = ssender.sendWithParam("86", mobile,
+//                    mSMSConfig.templateId, params, null, "", "");
+//            if (result.result == 0) {
+//                mRecords.put(mobile, new Record(code, mobile));
+//                return RestResult.ok(null);
+//            } else {
+//                LOG.error("Failure to send SMS {}", result);
+//                return RestResult.error(RestResult.RestCode.ERROR_SERVER_ERROR);
+//            }
+//        } catch (HTTPException e) {
+//            // HTTP响应码错误
+//            e.printStackTrace();
+//        } catch (JSONException e) {
+//            // json解析错误
+//            e.printStackTrace();
+//        } catch (IOException e) {
+//            // 网络IO错误
+//            e.printStackTrace();
+//        }
+//        return RestResult.error(RestResult.RestCode.ERROR_SERVER_ERROR);
     }
 
     @Override
@@ -155,7 +197,7 @@ public class ServiceImpl implements Service {
                     LOG.info("Create user failure {}", userIdResult.code);
                     return RestResult.error(RestResult.RestCode.ERROR_SERVER_ERROR);
                 }
-            } else if(userResult.getCode() != 0){
+            } else if (userResult.getCode() != 0) {
                 LOG.error("Get user failure {}", userResult.code);
                 return RestResult.error(RestResult.RestCode.ERROR_SERVER_ERROR);
             } else {
@@ -188,7 +230,7 @@ public class ServiceImpl implements Service {
         PCSession session = new PCSession();
         session.setClientId(request.getClientId());
         session.setCreateDt(System.currentTimeMillis());
-        session.setDuration(300*1000); //300 seconds
+        session.setDuration(300 * 1000); //300 seconds
 
         if (StringUtils.isEmpty(request.getToken())) {
             request.setToken(UUID.randomUUID().toString());
@@ -270,5 +312,173 @@ public class ServiceImpl implements Service {
         } else {
             return RestResult.error(RestResult.RestCode.ERROR_SESSION_EXPIRED);
         }
+    }
+
+    @Override
+    public RestResult loginByPassword(String mobile, String password, String clientId) {
+        if (("13900000000".equals(mobile) || "13900000001".equals(mobile))) {
+            LOG.info("is test account");
+        } else if (StringUtils.isEmpty(mSMSConfig.superCode)) {
+            Record record = mRecords.get(mobile);
+            if (record == null) {
+                LOG.error("not empty or not correct");
+                return RestResult.error(RestResult.RestCode.ERROR_CODE_INCORRECT);
+            }
+            if (System.currentTimeMillis() - record.getTimestamp() > 5 * 60 * 1000) {
+                LOG.error("Code expired. timestamp {}, now {}", record.getTimestamp(), System.currentTimeMillis());
+                return RestResult.error(RestResult.RestCode.ERROR_CODE_EXPIRED);
+            }
+        }
+
+        try {
+            //使用电话号码和密码查询用户信息。
+            if (password == null || password.equals(" ")) {
+                return RestResult.error(RestResult.RestCode.ERROR_CODE_PASSWORD);
+            }
+
+            String passwdMd5 = this.getMD5(password);
+            User userResult = userDao.getUser(mobile, passwdMd5);
+            //用户不存在
+            if (userResult == null || userResult.equals(" ")) {
+                return RestResult.error(RestResult.RestCode.ERROR_CODE_PASSWORD);
+            }
+
+            InputOutputUserInfo user;
+            boolean isNewUser = false;
+
+            //使用用户id获取token
+            IMResult<OutputGetIMTokenData> tokenResult = UserAdmin.getUserToken(userResult.getUserId(), clientId);
+            if (tokenResult.getErrorCode() != ErrorCode.ERROR_CODE_SUCCESS) {
+                LOG.error("Get user failure {}", tokenResult.code);
+                return RestResult.error(RestResult.RestCode.ERROR_SERVER_ERROR);
+            }
+
+            //返回用户id，token和是否新建
+            LoginResponse response = new LoginResponse();
+            response.setUserId(userResult.getUserId());
+            response.setToken(tokenResult.getResult().getToken());
+            response.setRegister(isNewUser);
+            return RestResult.ok(response);
+        } catch (Exception e) {
+            e.printStackTrace();
+            LOG.error("Exception happens {}", e);
+            return RestResult.error(RestResult.RestCode.ERROR_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public User getUser(String mobile, String password) {
+        String passwdMd5 = this.getMD5(password);
+        System.out.println(passwdMd5);
+        return userDao.getUser(mobile, passwdMd5);
+    }
+
+    //修改密码
+    @Override
+    public RestResult updatePassword(String userId, String password) {
+        if (StringUtils.isEmpty(userId)) {
+            return RestResult.error(RestResult.RestCode.ERROR_INVALID_USER);
+        }
+        String passwdMd5 = this.getMD5(password);
+        int status = userDao.updatePassword(userId, passwdMd5);
+        if (status == 0) {
+            return RestResult.error(RestResult.RestCode.ERROR_CODE_PASSWORD);
+        }
+        if (status == 1) {
+            return RestResult.ok(RestResult.RestCode.SUCCESS);
+        }
+        return RestResult.error(RestResult.RestCode.ERROR_CODE_PASSWORD);
+    }
+
+    //查询密码
+    @Override
+    public RestResult selectPassword(String userId) {
+        if (StringUtils.isEmpty(userId)) {
+            return RestResult.error(RestResult.RestCode.ERROR_INVALID_USER);
+        }
+
+        String password = userDao.selectPassword(userId);
+        BASE64Decoder base64Decoder = new BASE64Decoder();
+//        try {
+//            password = new String(base64Decoder.decodeBuffer(password), "UTF-8");
+//        } catch (Exception e) {
+//
+//        }
+        return RestResult.ok(password);
+    }
+
+    @Override
+    public RestResult addCollection(String uid, String mid) {
+        if(mid.isEmpty()||uid.isEmpty()){
+            return RestResult.error(RestResult.RestCode.ERROR_PARAMATER);//参数错误
+        }
+        Collection collection=new Collection();
+        collection.setUid(uid);
+        collection.setMid(mid);
+//        collection.setContentType(contentType);
+        int state=collectionDao.addCollection(collection);
+        if(state==1){
+            return RestResult.ok(null);//成功
+        }else {
+            return RestResult.error(RestResult.RestCode.ERROR_ADD_COLLECTION);//失败
+        }
+
+    }
+
+
+
+
+//    public RestResult insertCollection(String uid, String mid){
+//        if(mid.isEmpty()||uid.isEmpty()){
+//            return RestResult.error(RestResult.RestCode.ERROR_PARAMATER);//参数错误
+//        }
+//        if(this.addCollection( uid,  mid)==1){
+//            return RestResult.ok(null);//成功
+//        }else {
+//            return RestResult.error(RestResult.RestCode.ERROR_ADD_COLLECTION);//失败
+//        }
+//    }
+
+
+    @Override
+    public RestResult deleteCollection(String mid) {
+        if(mid.isEmpty()){
+            return RestResult.error(RestResult.RestCode.ERROR_PARAMATER);//参数错误
+        }
+        Collection collection=new Collection();
+        collection.setMid(mid);
+        int state=collectionDao.deleteCollection(collection);
+        if(state==1){//成功
+            return RestResult.ok(null);
+        }else {
+            return RestResult.error(RestResult.RestCode.ERROR_DELETE_COLLECTION);//失败
+        }
+    }
+
+//    public RestResult changeCollectionStatus(String mid){
+//        if(mid.isEmpty()){
+//            return RestResult.error(RestResult.RestCode.ERROR_PARAMATER);//参数错误
+//        }
+//        if(this.deleteCollection(mid)==1){//成功
+//            return RestResult.ok(null);
+//        }else {
+//            return RestResult.error(RestResult.RestCode.ERROR_DELETE_COLLECTION);//失败
+//        }
+//    }
+    public String getMD5(String password) {
+        MessageDigest md5 = null;
+        try {
+            md5 = MessageDigest.getInstance("MD5");
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        BASE64Encoder base64en = new BASE64Encoder();
+        String passwdMd5 = null;
+        try {
+            passwdMd5 = base64en.encode(md5.digest(password.getBytes("utf-8")));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return passwdMd5;
     }
 }

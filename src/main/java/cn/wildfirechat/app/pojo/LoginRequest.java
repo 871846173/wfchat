@@ -1,9 +1,19 @@
 package cn.wildfirechat.app.pojo;
 
 public class LoginRequest {
+    private String userId;
     private String mobile;
     private String code;
     private String clientId;
+    private String password;
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
 
     public String getClientId() {
         return clientId;
@@ -27,5 +37,13 @@ public class LoginRequest {
 
     public void setCode(String code) {
         this.code = code;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

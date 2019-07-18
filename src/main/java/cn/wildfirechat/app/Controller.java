@@ -50,4 +50,19 @@ public class Controller {
     public Object confirmPc(@RequestBody ConfirmSessionRequest request) {
         return mService.confirmPc(request);
     }
+
+    @PostMapping(value = "/loginByPassword", produces = "application/json;charset=UTF-8")
+    public Object loginByPassword(@RequestBody LoginRequest request) {
+        return mService.loginByPassword(request.getMobile(), request.getPassword(), request.getClientId());
+    }
+
+    @PostMapping(value = "/updatePassword", produces = "application/json;charset=UTF-8")
+    public Object updatePassword(@RequestBody LoginRequest request) {
+        return mService.updatePassword(request.getUserId(), request.getPassword());
+    }
+
+    @PostMapping(value = "/selectPassword", produces = "application/json;charset=UTF-8")
+    public Object selectPassword(@RequestBody LoginRequest request) {
+        return mService.selectPassword(request.getUserId());
+    }
 }
