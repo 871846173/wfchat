@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.wildfirechat.app.UserDao">
+    <!--    C:\Users\Administrator\IdeaProjects\im-app_server\src\main\java\cn\wildfirechat\dao\UserDao.java-->
+
+    <!--    <insert id="insert"   parameterType="UserPO"   >-->
+    <!--           insert into user(name,password,age,sex)-->
+    <!--           values(#{name},#{password},#{age},#{sex})-->
+    <!--    </insert>-->
+    <resultMap id="BaseResultMap" type="cn.wildfirechat.app.pojo.User">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="_mobile" property="mobile" jdbcType="VARCHAR"/>
+        <result column="_passwd_md5" property="password" jdbcType="VARCHAR"/>
+
+    </resultMap>
+
+    <select id="getUser" resultType="cn.wildfirechat.app.pojo.User">
+          SELECT id , _mobile as mobile, _uid as userId, _passwd_md5 as password
+          FROM t_user
+          WHERE _mobile=#{mobile} and _passwd_md5=#{password}
+    </select>
+
+    <select id="selectPassword" resultType="java.lang.String">
+          SELECT _passwd_md5 as password
+          FROM t_user
+          WHERE _uid=#{userId}
+    </select>
+
+    <update id="updatePassword" parameterType="java.lang.String">
+        UPDATE t_user SET _passwd_md5 = #{password} WHERE _uid = #{userId}
+    </update>
+
+    <!--    <select id="getName" parameterType="java.lang.String" resultType="UserPO">-->
+    <!--        select name,password,sex,age  from USER where name=#{name};-->
+    <!--    </select>-->
+
+</mapper>
