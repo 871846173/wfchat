@@ -13,7 +13,11 @@ public class RestResult {
         ERROR_SESSION_NOT_VERIFIED(9, "会话没有验证"),
         ERROR_SESSION_NOT_SCANED(10, "会话没有被扫码"),
         ERROR_CODE_PASSWORD(11, "用户密码错误或用户不存在"),
-        ERROR_INVALID_USER(12, "无效的用户");
+        ERROR_INVALID_USER(12, "无效的用户"),
+        ERROR_ADD_COLLECTION(13, "添加收藏失败"),
+        ERROR_DELETE_COLLECTION(14, "删除收藏失败"),
+        ERROR_PARAMATER(15, "参数错误");
+
 
         public int code;
         public String msg;

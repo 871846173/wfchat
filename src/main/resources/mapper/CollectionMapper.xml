@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.wildfirechat.app.CollectionDao">
+
+    <resultMap id="BaseResultMap" type="cn.wildfirechat.app.pojo.Collection">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="_uid" property="uid" jdbcType="VARCHAR"/>
+        <result column="_mid" property="mid" jdbcType="VARCHAR"/>
+
+    </resultMap>
+
+<insert id="addCollection" parameterType="cn.wildfirechat.app.pojo.Collection">
+    INSERT  INTO t_collection (_uid,_mid,_crate_time,_is_delete)
+    VALUES
+    (#{uid},#{mid},now(),'0')
+
+</insert>
+
+    <update id="deleteCollection" parameterType="cn.wildfirechat.app.pojo.Collection">
+        UPDATE t_collection SET t_collection._is_delete ='1' WHERE _mid = #{mid}
+    </update>
+
+
+</mapper>
