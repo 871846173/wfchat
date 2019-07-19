@@ -377,13 +377,15 @@ public class ServiceImpl implements Service {
         if (StringUtils.isEmpty(userId)) {
             return RestResult.error(RestResult.RestCode.ERROR_INVALID_USER);
         }
-        if (oldPassword != null) {
-            User user = userDao.verifyPassword(userId, this.getMD5(oldPassword));
+        if (!StringUtils.isEmpty(oldPassword)) {
+            String password = this.getMD5(oldPassword);
+            User user = userDao.verifyPassword(userId, password);
             if (StringUtils.isEmpty(user)) {
                 return RestResult.error(RestResult.RestCode.ERROR_CODE_PASSWORD);
             }
         }
-        int status = userDao.updatePassword(userId, this.getMD5(newPassword));
+        String password = this.getMD5(newPassword);
+        int status = userDao.updatePassword(userId, password);
         if (status == 0) {
             return RestResult.error(RestResult.RestCode.ERROR_CODE_PASSWORD);
         }
