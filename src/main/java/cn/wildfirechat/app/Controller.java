@@ -1,6 +1,7 @@
 package cn.wildfirechat.app;
 
 import cn.wildfirechat.app.pojo.*;
+import cn.wildfirechat.app.service.SelectTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,6 +13,8 @@ public class Controller {
     private Service mService;
     @Autowired
     private CollectionService collectionService;
+    @Autowired
+    private SelectTypeService selectTypeService;
 
     @PostMapping(value = "/send_code", produces = "application/json;charset=UTF-8")
     public Object sendCode(@RequestBody SendCodeRequest request) {
@@ -81,5 +84,11 @@ public class Controller {
     @PostMapping(value = "/getCollectionListWithUid", produces = "application/json;charset=UTF-8")
     public List<Collection> getCollectionListWithUid(@RequestBody Collection collection) {
         return collectionService.getCollectionListWithUid(collection.getUid());
+    }
+
+    @PostMapping(value = "/updateSelectType", produces = "application/json;charset=UTF-8")
+    public Object updateSelectType(@RequestBody SelectType selectType) {
+        return selectTypeService.updateSelectType(selectType.getUserId(), selectType.getcMobile(), selectType.getcGroup(),
+                selectType.getcQrcode(), selectType.getcCard());
     }
 }

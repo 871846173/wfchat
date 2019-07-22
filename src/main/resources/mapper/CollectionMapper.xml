@@ -22,8 +22,7 @@
     INSERT  INTO t_collection (_uid,_mid,_crate_time,_is_delete)
     VALUES
     (#{uid},#{mid},now(),'0')
-
-</insert>
+    </insert>
 
     <update id="deleteCollection" parameterType="cn.wildfirechat.app.pojo.Collection">
         UPDATE t_collection SET t_collection._is_delete ='1' WHERE _uid=#{uid} AND _mid = #{mid}

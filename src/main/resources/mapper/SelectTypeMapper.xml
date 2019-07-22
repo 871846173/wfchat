@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.wildfirechat.app.dao.SelectTypeDao">
+
+    <resultMap id="BaseResultMap" type="cn.wildfirechat.app.pojo.SelectType">
+        <id column="id" property="id"/>
+        <result column="_uid" property="userId"/>
+        <result column="c_mobile" property="cMobile"/>
+        <result column="c_group" property="cGroup"/>
+        <result column="c_qrcode" property="cQrcode"/>
+        <result column="c_card" property="cCard"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+    <update id="updateSelectType" parameterType="cn.wildfirechat.app.pojo.SelectType">
+        UPDATE t_select_type
+        SET
+        <if test="cMobile!=null">
+            c_mobile=#{cMobile},
+        </if>
+        <if test="cGroup!=null">
+            c_group=#{cGroup},
+        </if>
+        <if test="cQrcode!=null">
+            c_qrcode=#{cQrcode},
+        </if>
+        <if test="cCard!=null">
+            c_card=#{cCard}
+        </if>
+        WHERE _uid=#{userId}
+    </update>
+
+    <insert id="insertSelectType" parameterType="cn.wildfirechat.app.pojo.SelectType">
+    INSERT INTO t_select_type (_uid,c_mobile,c_group,c_qrcode,c_card,create_time)
+    VALUES
+    (#{userId},#{cMobile},#{cGroup},#{cQrcode},#{cCard},now())
+    </insert>
+
+</mapper>
