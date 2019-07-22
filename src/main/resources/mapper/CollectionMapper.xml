@@ -4,13 +4,21 @@
 <mapper namespace="cn.wildfirechat.app.CollectionDao">
 
     <resultMap id="BaseResultMap" type="cn.wildfirechat.app.pojo.Collection">
-        <id column="id" property="id" jdbcType="INTEGER"/>
-        <result column="_uid" property="uid" jdbcType="VARCHAR"/>
-        <result column="_mid" property="mid" jdbcType="VARCHAR"/>
-
+        <id column="id" property="id"/>
+        <result column="_uid" property="uid"/>
+        <result column="_mid" property="mid"/>
+        <result column="_searchable_key" property="searchableKey"/>
+        <result column="_dt" property="sendTime"/>
     </resultMap>
 
-<insert id="addCollection" parameterType="cn.wildfirechat.app.pojo.Collection">
+    <select id="getCollectionListWithUid" parameterType="java.lang.String"
+            resultType="cn.wildfirechat.app.pojo.Collection">
+        SELECT t_collection._mid as 'mid', t_collection.id AS id,_searchable_key AS 'searchableKey',_dt AS 'sendTime'
+        FROM t_messages_6 INNER JOIN t_collection ON t_messages_6._mid=t_collection._mid
+        AND t_collection._uid=#{uid} AND t_collection._is_delete='0'
+    </select>
+
+    <insert id="addCollection" parameterType="cn.wildfirechat.app.pojo.Collection">
     INSERT  INTO t_collection (_uid,_mid,_crate_time,_is_delete)
     VALUES
     (#{uid},#{mid},now(),'0')
@@ -18,7 +26,7 @@
 </insert>
 
     <update id="deleteCollection" parameterType="cn.wildfirechat.app.pojo.Collection">
-        UPDATE t_collection SET t_collection._is_delete ='1' WHERE _mid = #{mid}
+        UPDATE t_collection SET t_collection._is_delete ='1' WHERE _uid=#{uid} AND _mid = #{mid}
     </update>
 
 

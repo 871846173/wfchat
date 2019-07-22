@@ -1,16 +1,17 @@
 package cn.wildfirechat.app;
 
-import cn.wildfirechat.app.pojo.ConfirmSessionRequest;
-import cn.wildfirechat.app.pojo.LoginRequest;
-import cn.wildfirechat.app.pojo.CreateSessionRequest;
-import cn.wildfirechat.app.pojo.SendCodeRequest;
+import cn.wildfirechat.app.pojo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 public class Controller {
     @Autowired
     private Service mService;
+    @Autowired
+    private CollectionService collectionService;
 
     @PostMapping(value = "/send_code", produces = "application/json;charset=UTF-8")
     public Object sendCode(@RequestBody SendCodeRequest request) {
@@ -65,5 +66,20 @@ public class Controller {
     @PostMapping(value = "/forgetPassword", produces = "application/json;charset=UTF-8")
     public Object forgetPassword(@RequestBody LoginRequest request) {
         return mService.forgetPassword(request.getMobile(), request.getCode(), request.getPassword());
+    }
+
+    @PostMapping(value = "/addCollection", produces = "application/json;charset=UTF-8")
+    public Object addCollection(@RequestBody Collection collection) {
+        return collectionService.addCollection(collection.getUid(), collection.getMid());
+    }
+
+    @PostMapping(value = "/deleteCollection", produces = "application/json;charset=UTF-8")
+    public Object deleteCollection(@RequestBody Collection collection) {
+        return collectionService.deleteCollection(collection.getUid(), collection.getMid());
+    }
+
+    @PostMapping(value = "/getCollectionListWithUid", produces = "application/json;charset=UTF-8")
+    public List<Collection> getCollectionListWithUid(@RequestBody Collection collection) {
+        return collectionService.getCollectionListWithUid(collection.getUid());
     }
 }

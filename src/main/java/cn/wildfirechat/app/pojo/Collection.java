@@ -10,19 +10,23 @@ public class Collection {
     //收藏库
     @Id
     @Column(name = "id")
-    private int  id;
+    private int id;
     private String uid;
     private String mid;
-    private Date createTime;
-    private String contentType;
-    private String isDelete;
+
+//    private Date createTime;
+//    private String contentType;
+//    private String isDelete;
 
     //消息库
-    private int from;
-    private String type;
-    private String target;
-    private String line;
-    private String data;
+    private String from;
+//    private String type;
+//    private String target;
+//    private String line;
+//    private String data;
+
+    private String searchableKey;
+
     private Date sendTime;
 
     public int getId() {
@@ -49,68 +53,20 @@ public class Collection {
         this.mid = mid;
     }
 
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
-
-    public String getContentType() {
-        return contentType;
-    }
-
-    public void setContentType(String contentType) {
-        this.contentType = contentType;
-    }
-
-    public String getIsDelete() {
-        return isDelete;
-    }
-
-    public void setIsDelete(String isDelete) {
-        this.isDelete = isDelete;
-    }
-
-    public int getFrom() {
+    public String getFrom() {
         return from;
     }
 
-    public void setFrom(int from) {
+    public void setFrom(String from) {
         this.from = from;
     }
 
-    public String getType() {
-        return type;
+    public String getSearchableKey() {
+        return searchableKey;
     }
 
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getTarget() {
-        return target;
-    }
-
-    public void setTarget(String target) {
-        this.target = target;
-    }
-
-    public String getLine() {
-        return line;
-    }
-
-    public void setLine(String line) {
-        this.line = line;
-    }
-
-    public String getData() {
-        return data;
-    }
-
-    public void setData(String data) {
-        this.data = data;
+    public void setSearchableKey(String searchableKey) {
+        this.searchableKey = searchableKey;
     }
 
     public Date getSendTime() {
