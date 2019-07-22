@@ -38,4 +38,8 @@
         UPDATE t_user SET _passwd_md5 = #{password} WHERE _uid = #{userId}
     </update>
 
+    <update id="updatePasswordByMobile" parameterType="java.lang.String">
+        UPDATE t_user SET _passwd_md5 = #{password} WHERE _mobile = #{mobile}
+    </update>
+
 </mapper>

@@ -10,19 +10,13 @@ import cn.wildfirechat.sdk.ChatConfig;
 import cn.wildfirechat.sdk.UserAdmin;
 import cn.wildfirechat.sdk.model.IMResult;
 import com.cloopen.rest.sdk.CCPRestSDK;
-import com.github.qcloudsms.SmsSingleSender;
-import com.github.qcloudsms.SmsSingleSenderResult;
-import com.github.qcloudsms.httpclient.HTTPException;
-import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
-import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
 
 import javax.annotation.PostConstruct;
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -396,70 +390,23 @@ public class ServiceImpl implements Service {
     }
 
     @Override
-    public RestResult insertPassword(String mobile, String userId, String password) {
-        if (!Utils.isMobile(mobile)) {
-            LOG.error("Not valid mobile {}", mobile);
-            return RestResult.error(RestResult.RestCode.ERROR_INVALID_MOBILE);
-        }
+    public RestResult forgetPassword(String mobile, String code, String password) {
 
         Record record = mRecords.get(mobile);
-        if (record != null && System.currentTimeMillis() - record.getTimestamp() < 60 * 1000) {
-            LOG.error("Send code over frequency. timestamp {}, now {}", record.getTimestamp(), System.currentTimeMillis());
-            return RestResult.error(RestResult.RestCode.ERROR_SEND_SMS_OVER_FREQUENCY);
+        if (record == null || !record.getCode().equals(code)) {
+            LOG.error("not empty or not correct");
+            return RestResult.error(RestResult.RestCode.ERROR_CODE_INCORRECT);
         }
-        Count count = mCounts.get(mobile);
-        if (count == null) {
-            count = new Count();
-            mCounts.put(mobile, count);
-        }
-
-        if (!count.increaseAndCheck()) {
-            LOG.error("Count check failure, already send {} messages today", count.count);
-            return RestResult.error(RestResult.RestCode.ERROR_SEND_SMS_OVER_FREQUENCY);
+        if (System.currentTimeMillis() - record.getTimestamp() > 5 * 60 * 1000) {
+            LOG.error("Code expired. timestamp {}, now {}", record.getTimestamp(), System.currentTimeMillis());
+            return RestResult.error(RestResult.RestCode.ERROR_CODE_EXPIRED);
         }
 
-        String code = Utils.getRandomCode(4);
-        String[] params = {code};
-//        new String[]{code,"5"}
-        HashMap<String, Object> result = null;
-        //初始化sdk
-        CCPRestSDK restAPI = new CCPRestSDK();
-        // 初始化服务器地址和端口，格式如下，服务器地址不需要写https://
-        restAPI.init(mSMSConfig.serverip, mSMSConfig.serverport);
-        // 初始化主帐号和主帐号TOKEN
-        restAPI.setAccount(mSMSConfig.accountsid, mSMSConfig.accounttoken);
-        // 初始化应用ID
-        restAPI.setAppId(mSMSConfig.appid);
-        //模板Id，不带此参数查询全部可用模板
-        result = restAPI.sendTemplateSMS(mobile, mSMSConfig.templateId, params);
-        System.out.println("QuerySMSTemplate result=" + result);
-        if ("000000".equals(result.get("statusCode"))) {
-            //正常返回输出data包体信息（map）
-            HashMap<String, Object> data = (HashMap<String, Object>) result.get("data");
-            Set<String> keySet = data.keySet();
-            for (String key : keySet) {
-                Object object = data.get(key);
-                System.out.println(key + " = " + object);
-            }
-            mRecords.put(mobile, new Record(code, mobile));
-
-            if (StringUtils.isEmpty(userId)) {
-                return RestResult.error(RestResult.RestCode.ERROR_INVALID_USER);
-            }
-            int status = userDao.updatePassword(userId, this.getMD5(password));
-            if (status == 0) {
-                return RestResult.error(RestResult.RestCode.ERROR_CODE_PASSWORD);
-            }
-            if (status == 1) {
-                return RestResult.ok(RestResult.RestCode.SUCCESS);
-            }
-            return RestResult.ok(null);
-        } else {
-            //异常返回输出错误码和错误信息
-            System.out.println("错误码=" + result.get("statusCode") + " 错误信息= " + result.get("statusMsg"));
-            LOG.error("Failure to send SMS {}", result);
-            return RestResult.error(RestResult.RestCode.ERROR_SERVER_ERROR);
+        int status = userDao.updatePasswordByMobile(mobile, this.getMD5(password));
+        if (status == 0) {
+            return RestResult.error(RestResult.RestCode.ERROR_INVALID_USER);
         }
+        return RestResult.ok(RestResult.RestCode.SUCCESS);
     }
 
     public String getMD5(String password) {

@@ -19,5 +19,5 @@ public interface Service {
     User getUser(String mobile, String password);
 
     RestResult updatePassword(String userId,String oldPassword, String newPassword);
-    RestResult insertPassword(String mobile,String userId,String password);
+    RestResult forgetPassword(String mobile,String code,String password);
 }

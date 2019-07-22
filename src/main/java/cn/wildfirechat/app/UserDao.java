@@ -14,5 +14,7 @@ public interface UserDao {
 
     int updatePassword(@Param(value = "userId") String userId, @Param(value = "password") String password);
 
+    int updatePasswordByMobile(@Param(value = "mobile") String mobile, @Param(value = "password") String password);
+
     String selectPassword(@Param(value = "userId") String userId);
 }

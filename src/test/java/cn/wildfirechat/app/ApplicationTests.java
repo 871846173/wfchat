@@ -35,9 +35,9 @@
 //    }
 //
 //    @Test
-//    public void updatePassword() {
-//        RestResult restResult = userService.updatePassword("admin11", "12345", "12345");
-//
+//    public void forgetPassword() {
+//        int status = userDao.updatePasswordByMobile("156060445981", "12345");
+//        System.out.println(status);
 //    }
 //
 //    @Test

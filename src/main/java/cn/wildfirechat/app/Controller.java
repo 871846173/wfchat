@@ -61,9 +61,9 @@ public class Controller {
         return mService.updatePassword(request.getUserId(), request.getOldPassword(), request.getNewPassword());
     }
 
-    //设置登录密码
-    @PostMapping(value = "/insertPassword", produces = "application/json;charset=UTF-8")
-    public Object insertPassword(@RequestBody LoginRequest request) {
-        return mService.insertPassword(request.getMobile(), request.getUserId(), request.getPassword());
+    //忘记登录密码
+    @PostMapping(value = "/forgetPassword", produces = "application/json;charset=UTF-8")
+    public Object forgetPassword(@RequestBody LoginRequest request) {
+        return mService.forgetPassword(request.getMobile(), request.getCode(), request.getPassword());
     }
 }
