@@ -43,7 +43,7 @@ public class CollectionServiceImpl  implements CollectionService {
         if(status==1){
             return RestResult.ok(RestResult.RestCode.SUCCESS);
         }else {
-            return RestResult.error(RestResult.RestCode.ERROR_ADD_COLLECTION);
+            return RestResult.error(RestResult.RestCode.ERROR_DELETE_COLLECTION);
         }
 
     }
