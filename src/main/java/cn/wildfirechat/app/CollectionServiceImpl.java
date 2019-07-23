@@ -51,7 +51,7 @@ public class CollectionServiceImpl  implements CollectionService {
     }
 
     @Override
-    public List<Collection> getCollectionListWithUid(String uid) {
+    public RestResult getCollectionListWithUid(String uid) {
 //        int collectionCount=collectionDao.getCollectionCount(mid);
 //        List<Collection> collectionList=new ArrayList();
 //        for(int i=0;i<collectionCount;i++){
@@ -59,7 +59,7 @@ public class CollectionServiceImpl  implements CollectionService {
 //            collection.setData();
 //        }
         List<Collection> list= collectionDao.getCollectionListWithUid(uid);
-        return list;
+        return RestResult.ok(list);
 //        return  null;
     }
 
