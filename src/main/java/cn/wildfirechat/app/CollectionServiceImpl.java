@@ -51,20 +51,16 @@ public class CollectionServiceImpl  implements CollectionService {
     }
 
     @Override
-    public RestResult getCollectionListWithUid(String uid) {
+    public List<Collection> getCollectionListWithUid(String uid) {
 //        int collectionCount=collectionDao.getCollectionCount(mid);
 //        List<Collection> collectionList=new ArrayList();
 //        for(int i=0;i<collectionCount;i++){
 //            Collection collection=new Collection();
 //            collection.setData();
 //        }
-
         List<Collection> list= collectionDao.getCollectionListWithUid(uid);
-        if(list==null){
-            return RestResult.error(RestResult.RestCode.ERROR_SERVER_ERROR);
-        }else {
-            return RestResult.ok(list);
-        }
+        return list;
+//        return  null;
     }
 
     @Override
