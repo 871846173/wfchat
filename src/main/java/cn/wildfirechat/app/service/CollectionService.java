@@ -9,7 +9,7 @@ public interface CollectionService {
 
     RestResult addCollection(String uid, String mid);
     RestResult deleteCollection(String uid,String mid);
-    RestResult getCollectionListWithUid(String uid);
+    List<Collection> getCollectionListWithUid(String uid);
 //    int getcollectionCountByMid(String mid);
     String getCollectionListWithUid1(String uid);
 }
