@@ -86,7 +86,7 @@ public class Controller {
     }
 
     @PostMapping(value = "/getCollectionListWithUid", produces = "application/json;charset=UTF-8")
-    public List<Collection> getCollectionListWithUid(@RequestBody Collection collection) {
+    public  RestResult getCollectionListWithUid(@RequestBody Collection collection) {
         return collectionService.getCollectionListWithUid(collection.getUid());
     }
 
