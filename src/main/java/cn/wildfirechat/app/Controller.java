@@ -3,7 +3,10 @@ package cn.wildfirechat.app;
 import cn.wildfirechat.app.pojo.*;
 import cn.wildfirechat.app.service.SelectTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -86,9 +89,16 @@ public class Controller {
         return collectionService.getCollectionListWithUid(collection.getUid());
     }
 
+    //修改用户添加方式（0允许1不允许）
     @PostMapping(value = "/updateSelectType", produces = "application/json;charset=UTF-8")
     public Object updateSelectType(@RequestBody SelectType selectType) {
         return selectTypeService.updateSelectType(selectType.getUserId(), selectType.getcMobile(), selectType.getcGroup(),
                 selectType.getcQrcode(), selectType.getcCard());
+    }
+
+    //查询用户添加方式
+    @PostMapping(value = "/selectType", produces = "application/json;charset=UTF-8")
+    public Object selectType(@RequestBody SelectType selectType) {
+        return selectTypeService.selectType(selectType.getUserId());
     }
 }

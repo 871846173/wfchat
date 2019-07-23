@@ -16,7 +16,7 @@ public class SelectType {
     //是否允许名片添加
     private int cCard;
     //创建时间
-    private Long createTime;
+    private String createTime;
 
     public int getId() {
         return id;
@@ -66,11 +66,11 @@ public class SelectType {
         this.cCard = cCard;
     }
 
-    public Long getCreateTime() {
+    public String getCreateTime() {
         return createTime;
     }
 
-    public void setCreateTime(Long createTime) {
+    public void setCreateTime(String createTime) {
         this.createTime = createTime;
     }
 }

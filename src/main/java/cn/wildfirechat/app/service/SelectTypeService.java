@@ -6,5 +6,7 @@ public interface SelectTypeService {
 
     RestResult updateSelectType(String userId, int cMobile, int cGroup, int cQrcode, int cCard);
 
-    RestResult insertSelectType(String userId, int cMobile, int cGroup, int cQrcode, int cCard);
+    RestResult createSelectType(String userId);
+
+    RestResult selectType(String userId);
 }

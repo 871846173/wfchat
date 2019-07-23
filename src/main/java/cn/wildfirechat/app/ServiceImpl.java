@@ -1,7 +1,9 @@
 package cn.wildfirechat.app;
 
 
+import cn.wildfirechat.app.dao.SelectTypeDao;
 import cn.wildfirechat.app.pojo.*;
+import cn.wildfirechat.app.service.SelectTypeService;
 import cn.wildfirechat.common.ErrorCode;
 import cn.wildfirechat.pojos.InputOutputUserInfo;
 import cn.wildfirechat.pojos.OutputCreateUser;
@@ -66,6 +68,8 @@ public class ServiceImpl implements Service {
     private IMConfig mIMConfig;
     @Autowired
     private UserDao userDao;
+    @Autowired
+    private SelectTypeService selectTypeService;
 
     @PostConstruct
     private void init() {
@@ -195,6 +199,8 @@ public class ServiceImpl implements Service {
             } else {
                 user = userResult.getResult();
             }
+            //创建用户允许添加方式
+            selectTypeService.createSelectType(user.getUserId());
 
             //使用用户id获取token
             IMResult<OutputGetIMTokenData> tokenResult = UserAdmin.getUserToken(user.getUserId(), clientId);

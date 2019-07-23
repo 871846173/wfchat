@@ -45,7 +45,7 @@ public class SelectTypeServiceImpl implements SelectTypeService {
     }
 
     @Override
-    public RestResult insertSelectType(String userId, int cMobile, int cGroup, int cQrcode, int cCard) {
+    public RestResult createSelectType(String userId) {
         if (StringUtils.isEmpty(userId)) {
             return RestResult.error(RestResult.RestCode.ERROR_INVALID_USER);
         }
@@ -64,5 +64,18 @@ public class SelectTypeServiceImpl implements SelectTypeService {
             return RestResult.error(RestResult.RestCode.ERROR_SERVER_ERROR);
         }
 
+    }
+
+    @Override
+    public RestResult selectType(String userId) {
+        if (StringUtils.isEmpty(userId)) {
+            return RestResult.error(RestResult.RestCode.ERROR_INVALID_USER);
+        }
+
+        SelectType selectType = selectTypeDao.selectType(userId);
+        if (StringUtils.isEmpty(selectType)){
+            return RestResult.error(RestResult.RestCode.ERROR_SERVER_ERROR);
+        }
+        return RestResult.ok(selectType);
     }
 }

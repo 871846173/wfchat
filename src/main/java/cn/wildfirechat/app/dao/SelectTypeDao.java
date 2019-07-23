@@ -4,6 +4,8 @@ import cn.wildfirechat.app.pojo.SelectType;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Mapper
 @Repository
 public interface SelectTypeDao {
@@ -11,4 +13,6 @@ public interface SelectTypeDao {
     int updateSelectType(SelectType selectType);
 
     int insertSelectType(SelectType selectType);
+
+    SelectType selectType(String userId);
 }

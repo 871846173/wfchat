@@ -37,4 +37,10 @@
     (#{userId},#{cMobile},#{cGroup},#{cQrcode},#{cCard},now())
     </insert>
 
+    <select id="selectType" resultType="cn.wildfirechat.app.pojo.SelectType">
+          SELECT id,_uid as userId,c_mobile as cMobile,c_group as cGroup,c_qrcode as cQrcode,c_card as cCard,create_time as createTime
+          FROM t_select_type
+          WHERE _uid=#{userId}
+    </select>
+
 </mapper>
