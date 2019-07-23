@@ -1,6 +1,8 @@
 package cn.wildfirechat.app;
 
+import cn.wildfirechat.app.dao.CollectionDao;
 import cn.wildfirechat.app.pojo.Collection;
+import cn.wildfirechat.app.service.CollectionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;

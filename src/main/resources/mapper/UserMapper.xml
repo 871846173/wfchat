@@ -28,10 +28,10 @@
           WHERE _uid=#{userId} and _passwd_md5=#{password}
     </select>
 
-    <select id="selectPassword" resultType="java.lang.String">
-          SELECT _passwd_md5 as password
+    <select id="selectUserId" resultType="java.lang.String">
+          SELECT _uid as userId
           FROM t_user
-          WHERE _uid=#{userId}
+          WHERE _mobile=#{mobile}
     </select>
 
     <update id="updatePassword" parameterType="java.lang.String">

@@ -3,20 +3,18 @@ package cn.wildfirechat.app;
 import cn.wildfirechat.app.dao.SelectTypeDao;
 import cn.wildfirechat.app.pojo.SelectType;
 import cn.wildfirechat.app.service.SelectTypeService;
-import com.cloopen.rest.sdk.utils.DateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 @org.springframework.stereotype.Service
 public class SelectTypeServiceImpl implements SelectTypeService {
     @Autowired
     private SelectTypeDao selectTypeDao;
+    @Autowired
+    private UserDao userDao;
 
     @Override
-    public RestResult updateSelectType(String userId, int cMobile, int cGroup, int cQrcode, int cCard) {
+    public RestResult updateSelectType(String userId, String cMobile, String cGroup, String cQrcode, String cCard) {
         if (StringUtils.isEmpty(userId)) {
             return RestResult.error(RestResult.RestCode.ERROR_INVALID_USER);
         }
@@ -51,10 +49,10 @@ public class SelectTypeServiceImpl implements SelectTypeService {
         }
         SelectType selectType = new SelectType();
         selectType.setUserId(userId);
-        selectType.setcMobile(0);
-        selectType.setcGroup(0);
-        selectType.setcQrcode(0);
-        selectType.setcCard(0);
+        selectType.setcMobile("0");
+        selectType.setcGroup("0");
+        selectType.setcQrcode("0");
+        selectType.setcCard("0");
 //        selectType.setCreateTime(System.currentTimeMillis());
 
         int status = selectTypeDao.insertSelectType(selectType);
@@ -67,13 +65,15 @@ public class SelectTypeServiceImpl implements SelectTypeService {
     }
 
     @Override
-    public RestResult selectType(String userId) {
+    public RestResult selectType(String mobile) {
+
+        String userId = userDao.selectUserId(mobile);
         if (StringUtils.isEmpty(userId)) {
             return RestResult.error(RestResult.RestCode.ERROR_INVALID_USER);
         }
 
         SelectType selectType = selectTypeDao.selectType(userId);
-        if (StringUtils.isEmpty(selectType)){
+        if (StringUtils.isEmpty(selectType)) {
             return RestResult.error(RestResult.RestCode.ERROR_SERVER_ERROR);
         }
         return RestResult.ok(selectType);

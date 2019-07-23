@@ -1,22 +1,22 @@
 package cn.wildfirechat.app.pojo;
 
-import java.util.Date;
-
 public class SelectType {
 
     private int id;
     //用户id
     private String userId;
     //是否允许手机号查询
-    private int cMobile;
+    private String cMobile;
     //是否允许群组添加
-    private int cGroup;
+    private String cGroup;
     //是否允许二维码添加
-    private int cQrcode;
+    private String cQrcode;
     //是否允许名片添加
-    private int cCard;
+    private String cCard;
     //创建时间
     private String createTime;
+
+    private String mobile;
 
     public int getId() {
         return id;
@@ -34,35 +34,35 @@ public class SelectType {
         this.userId = userId;
     }
 
-    public int getcMobile() {
+    public String getcMobile() {
         return cMobile;
     }
 
-    public void setcMobile(int cMobile) {
+    public void setcMobile(String cMobile) {
         this.cMobile = cMobile;
     }
 
-    public int getcGroup() {
+    public String getcGroup() {
         return cGroup;
     }
 
-    public void setcGroup(int cGroup) {
+    public void setcGroup(String cGroup) {
         this.cGroup = cGroup;
     }
 
-    public int getcQrcode() {
+    public String getcQrcode() {
         return cQrcode;
     }
 
-    public void setcQrcode(int cQrcode) {
+    public void setcQrcode(String cQrcode) {
         this.cQrcode = cQrcode;
     }
 
-    public int getcCard() {
+    public String getcCard() {
         return cCard;
     }
 
-    public void setcCard(int cCard) {
+    public void setcCard(String cCard) {
         this.cCard = cCard;
     }
 
@@ -72,5 +72,13 @@ public class SelectType {
 
     public void setCreateTime(String createTime) {
         this.createTime = createTime;
+    }
+
+    public String getMobile() {
+        return mobile;
+    }
+
+    public void setMobile(String mobile) {
+        this.mobile = mobile;
     }
 }

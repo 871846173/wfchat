@@ -1,6 +1,7 @@
 package cn.wildfirechat.app;
 
 import cn.wildfirechat.app.pojo.*;
+import cn.wildfirechat.app.service.CollectionService;
 import cn.wildfirechat.app.service.SelectTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -99,6 +100,6 @@ public class Controller {
     //查询用户添加方式
     @PostMapping(value = "/selectType", produces = "application/json;charset=UTF-8")
     public Object selectType(@RequestBody SelectType selectType) {
-        return selectTypeService.selectType(selectType.getUserId());
+        return selectTypeService.selectType(selectType.getcMobile());
     }
 }

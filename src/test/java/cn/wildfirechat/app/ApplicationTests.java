@@ -52,7 +52,7 @@
 //    @Test
 //    public void insertSelectType() {
 //
-//        selectTypeService.createSelectType("3");
+//        selectTypeService.createSelectType("6");
 //    }
 //
 //    @Test

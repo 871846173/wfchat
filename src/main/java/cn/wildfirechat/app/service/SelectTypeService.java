@@ -4,9 +4,9 @@ import cn.wildfirechat.app.RestResult;
 
 public interface SelectTypeService {
 
-    RestResult updateSelectType(String userId, int cMobile, int cGroup, int cQrcode, int cCard);
+    RestResult updateSelectType(String userId, String cMobile, String cGroup, String cQrcode, String cCard);
 
     RestResult createSelectType(String userId);
 
-    RestResult selectType(String userId);
+    RestResult selectType(String mobile);
 }
