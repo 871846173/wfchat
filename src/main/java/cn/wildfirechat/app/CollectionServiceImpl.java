@@ -57,9 +57,9 @@ public class CollectionServiceImpl  implements CollectionService {
 
         List<Collection> list= collectionDao.getCollectionListWithUid(uid);
 //        String resultList= JSON.toJSONString(list);
-//        CollectionList collectionList=new CollectionList();
-//        collectionList.setList(list);
-        return RestResult.ok(list);
+        CollectionList result=new CollectionList();
+        result.setList(list);
+        return RestResult.ok(result);
 //        return  null;
     }
 
