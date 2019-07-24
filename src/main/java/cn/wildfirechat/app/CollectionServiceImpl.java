@@ -4,6 +4,7 @@ import cn.wildfirechat.app.dao.CollectionDao;
 import cn.wildfirechat.app.pojo.Collection;
 import cn.wildfirechat.app.pojo.CollectionList;
 import cn.wildfirechat.app.service.CollectionService;
+import com.alibaba.fastjson.JSON;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
@@ -53,16 +54,12 @@ public class CollectionServiceImpl  implements CollectionService {
 
     @Override
     public RestResult getCollectionListWithUid(String uid) {
-//        int collectionCount=collectionDao.getCollectionCount(mid);
-//        List<Collection> collectionList=new ArrayList();
-//        for(int i=0;i<collectionCount;i++){
-//            Collection collection=new Collection();
-//            collection.setData();
-//        }
+
         List<Collection> list= collectionDao.getCollectionListWithUid(uid);
-        CollectionList collectionList=new CollectionList();
-        collectionList.setList(list);
-        return RestResult.ok(collectionList);
+        String resultList= JSON.toJSONString(list);
+//        CollectionList collectionList=new CollectionList();
+//        collectionList.setList(list);
+        return RestResult.ok(resultList);
 //        return  null;
     }
 
