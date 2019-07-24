@@ -2,6 +2,7 @@ package cn.wildfirechat.app;
 
 import cn.wildfirechat.app.dao.CollectionDao;
 import cn.wildfirechat.app.pojo.Collection;
+import cn.wildfirechat.app.pojo.CollectionList;
 import cn.wildfirechat.app.service.CollectionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -59,7 +60,9 @@ public class CollectionServiceImpl  implements CollectionService {
 //            collection.setData();
 //        }
         List<Collection> list= collectionDao.getCollectionListWithUid(uid);
-        return RestResult.ok(list);
+        CollectionList collectionList=new CollectionList();
+        collectionList.setList(list);
+        return RestResult.ok(collectionList);
 //        return  null;
     }
 
