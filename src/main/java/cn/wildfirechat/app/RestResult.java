@@ -16,7 +16,8 @@ public class RestResult {
         ERROR_INVALID_USER(12, "无效的用户"),
         ERROR_ADD_COLLECTION(13, "添加收藏失败"),
         ERROR_DELETE_COLLECTION(14, "删除收藏失败"),
-        ERROR_PARAMATER(15, "参数错误");
+        ERROR_PARAMATER(15, "参数错误"),
+        ERROR_NO_COLLECTION(16, "收藏夹空空如也~");
 
 
         public int code;

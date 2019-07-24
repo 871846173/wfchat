@@ -56,10 +56,16 @@ public class CollectionServiceImpl  implements CollectionService {
     public RestResult getCollectionListWithUid(String uid) {
 
         List<Collection> list= collectionDao.getCollectionListWithUid(uid);
+        if(list==null){
+            return RestResult.error(RestResult.RestCode.ERROR_PARAMATER);
+        }
+        if(list.size()==0){
+            return RestResult.error(RestResult.RestCode.ERROR_NO_COLLECTION);
+        }
 //        String resultList= JSON.toJSONString(list);
-        CollectionList result=new CollectionList();
-        result.setList(list);
-        return RestResult.ok(result);
+//        CollectionList result=new CollectionList();
+//        result.setList(list);
+        return RestResult.ok(list);
 //        return  null;
     }
 
