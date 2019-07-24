@@ -9,8 +9,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
 @RestController
 public class Controller {
     @Autowired
@@ -86,7 +84,7 @@ public class Controller {
     }
 
     @PostMapping(value = "/getCollectionListWithUid", produces = "application/json;charset=UTF-8")
-    public  RestResult getCollectionListWithUid(@RequestBody Collection collection) {
+    public RestResult getCollectionListWithUid(@RequestBody Collection collection) {
         return collectionService.getCollectionListWithUid(collection.getUid());
     }
 
@@ -101,5 +99,11 @@ public class Controller {
     @PostMapping(value = "/selectType", produces = "application/json;charset=UTF-8")
     public Object selectType(@RequestBody SelectType selectType) {
         return selectTypeService.selectType(selectType.getcMobile());
+    }
+
+    //是否根据验证码登录
+    @PostMapping(value = "/updateCCode", produces = "application/json;charset=UTF-8")
+    public Object updateCCode(@RequestBody SelectType selectType) {
+        return selectTypeService.updateCCode(selectType.getUserId(), selectType.getcCode());
     }
 }

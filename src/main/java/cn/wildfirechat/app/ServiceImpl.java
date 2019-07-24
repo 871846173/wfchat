@@ -69,6 +69,8 @@ public class ServiceImpl implements Service {
     @Autowired
     private UserDao userDao;
     @Autowired
+    private SelectTypeDao selectTypeDao;
+    @Autowired
     private SelectTypeService selectTypeService;
 
     @PostConstruct
@@ -158,6 +160,14 @@ public class ServiceImpl implements Service {
 
     @Override
     public RestResult login(String mobile, String code, String clientId) {
+        String userId = userDao.selectUserId(mobile);
+        SelectType selectType = selectTypeDao.selectType(userId);
+
+        if (selectType != null && selectType.getcCode().equals("1")) {
+            String s = "不允许用验证码登录";
+            return RestResult.ok(s);
+        }
+
         if (("13900000000".equals(mobile) || "13900000001".equals(mobile)) && code.equals("556677")) {
             LOG.info("is test account");
         } else if (StringUtils.isEmpty(mSMSConfig.superCode) || !code.equals(mSMSConfig.superCode)) {
@@ -186,6 +196,8 @@ public class ServiceImpl implements Service {
                 user.setDisplayName(mobile);
                 user.setMobile(mobile);
                 IMResult<OutputCreateUser> userIdResult = UserAdmin.createUser(user);
+                //创建用户允许添加方式
+                selectTypeService.createSelectType(userIdResult.getResult().getUserId());
                 if (userIdResult.getErrorCode() == ErrorCode.ERROR_CODE_SUCCESS) {
                     user.setUserId(userIdResult.getResult().getUserId());
                     isNewUser = true;
@@ -199,8 +211,6 @@ public class ServiceImpl implements Service {
             } else {
                 user = userResult.getResult();
             }
-            //创建用户允许添加方式
-            selectTypeService.createSelectType(user.getUserId());
 
             //使用用户id获取token
             IMResult<OutputGetIMTokenData> tokenResult = UserAdmin.getUserToken(user.getUserId(), clientId);

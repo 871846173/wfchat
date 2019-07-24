@@ -13,9 +13,11 @@ public class SelectType {
     private String cQrcode;
     //是否允许名片添加
     private String cCard;
+    //是否允许验证码登录
+    private String cCode;
     //创建时间
     private String createTime;
-
+    //手机号码
     private String mobile;
 
     public int getId() {
@@ -64,6 +66,14 @@ public class SelectType {
 
     public void setcCard(String cCard) {
         this.cCard = cCard;
+    }
+
+    public String getcCode() {
+        return cCode;
+    }
+
+    public void setcCode(String cCode) {
+        this.cCode = cCode;
     }
 
     public String getCreateTime() {

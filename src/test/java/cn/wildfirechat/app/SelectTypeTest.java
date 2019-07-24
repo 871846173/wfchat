@@ -23,4 +23,11 @@
 //        RestResult restResult = selectTypeService.selectType("12333333333");
 //        System.out.println(restResult);
 //    }
+//
+//    @Test
+//    public void updateCCode() {
+//
+//        RestResult restResult = selectTypeService.updateCCode("1","1");
+//        System.out.println(restResult);
+//    }
 //}

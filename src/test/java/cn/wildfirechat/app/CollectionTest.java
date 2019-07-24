@@ -21,6 +21,7 @@
 //
 //    @Test
 //    public void getCollectionListWithUid() {
-//        collectionService.addCollection("585U5U33", "102123028969717761");
+//        Object a = collectionService.getCollectionListWithUid("585U5U33");
+//        System.out.println(a);
 //    }
 //}

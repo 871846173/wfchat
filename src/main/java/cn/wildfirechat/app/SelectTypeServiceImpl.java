@@ -53,6 +53,7 @@ public class SelectTypeServiceImpl implements SelectTypeService {
         selectType.setcGroup("0");
         selectType.setcQrcode("0");
         selectType.setcCard("0");
+        selectType.setcCode("0");
 //        selectType.setCreateTime(System.currentTimeMillis());
 
         int status = selectTypeDao.insertSelectType(selectType);
@@ -77,5 +78,25 @@ public class SelectTypeServiceImpl implements SelectTypeService {
             return RestResult.error(RestResult.RestCode.ERROR_SERVER_ERROR);
         }
         return RestResult.ok(selectType);
+    }
+
+    @Override
+    public RestResult updateCCode(String userId, String cCode) {
+        if (StringUtils.isEmpty(userId)) {
+            return RestResult.error(RestResult.RestCode.ERROR_INVALID_USER);
+        }
+        SelectType selectType = new SelectType();
+        selectType.setUserId(userId);
+        if (!StringUtils.isEmpty(cCode)) {
+            selectType.setcCode(cCode);
+        }
+
+        int status = selectTypeDao.updateSelectType(selectType);
+        if (status == 1) {
+            return RestResult.ok(RestResult.RestCode.SUCCESS);
+        } else {
+            return RestResult.error(RestResult.RestCode.ERROR_SERVER_ERROR);
+        }
+
     }
 }
