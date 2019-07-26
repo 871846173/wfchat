@@ -160,12 +160,15 @@ public class ServiceImpl implements Service {
 
     @Override
     public RestResult login(String mobile, String code, String clientId) {
+        boolean allowCode = true;
         String userId = userDao.selectUserId(mobile);
         SelectType selectType = selectTypeDao.selectType(userId);
 
         if (selectType != null && selectType.getcCode().equals("1")) {
-            String s = "不允许用验证码登录";
-            return RestResult.ok(s);
+            allowCode = false;
+            LoginResponse response = new LoginResponse();
+            response.setAllow(allowCode);
+            return RestResult.ok(response);
         }
 
         if (("13900000000".equals(mobile) || "13900000001".equals(mobile)) && code.equals("556677")) {
@@ -224,6 +227,7 @@ public class ServiceImpl implements Service {
             response.setUserId(user.getUserId());
             response.setToken(tokenResult.getResult().getToken());
             response.setRegister(isNewUser);
+            response.setAllow(allowCode);
             return RestResult.ok(response);
         } catch (Exception e) {
             e.printStackTrace();

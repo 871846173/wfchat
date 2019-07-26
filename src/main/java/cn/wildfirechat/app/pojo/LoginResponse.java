@@ -4,6 +4,7 @@ public class LoginResponse {
     private String userId;
     private String token;
     private boolean register;
+    private boolean allow;
 
     public String getUserId() {
         return userId;
@@ -27,5 +28,13 @@ public class LoginResponse {
 
     public void setRegister(boolean register) {
         this.register = register;
+    }
+
+    public boolean isAllow() {
+        return allow;
+    }
+
+    public void setAllow(boolean allow) {
+        this.allow = allow;
     }
 }

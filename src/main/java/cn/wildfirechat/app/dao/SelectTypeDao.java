@@ -15,4 +15,6 @@ public interface SelectTypeDao {
     int insertSelectType(SelectType selectType);
 
     SelectType selectType(String userId);
+
+    SelectType selectCCode(String userId);
 }

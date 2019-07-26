@@ -106,4 +106,9 @@ public class Controller {
     public Object updateCCode(@RequestBody SelectType selectType) {
         return selectTypeService.updateCCode(selectType.getUserId(), selectType.getcCode());
     }
+
+    @PostMapping(value = "/selectCCode", produces = "application/json;charset=UTF-8")
+    public Object selectCCode(@RequestBody SelectType selectType) {
+        return selectTypeService.selectCCode(selectType.getUserId());
+    }
 }

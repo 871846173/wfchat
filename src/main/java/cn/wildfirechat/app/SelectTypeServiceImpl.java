@@ -97,6 +97,20 @@ public class SelectTypeServiceImpl implements SelectTypeService {
         } else {
             return RestResult.error(RestResult.RestCode.ERROR_SERVER_ERROR);
         }
-
     }
+
+    @Override
+    public RestResult selectCCode(String userId) {
+
+        if (StringUtils.isEmpty(userId)) {
+            return RestResult.error(RestResult.RestCode.ERROR_INVALID_USER);
+        }
+
+        SelectType selectType = selectTypeDao.selectCCode(userId);
+        if (StringUtils.isEmpty(selectType)) {
+            return RestResult.error(RestResult.RestCode.ERROR_SERVER_ERROR);
+        }
+        return RestResult.ok(selectType);
+    }
+
 }

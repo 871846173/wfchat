@@ -3,7 +3,6 @@ package cn.wildfirechat.app.pojo;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import java.util.Date;
 
 @Table(name = "t_collection")
 public class Collection {
@@ -14,7 +13,7 @@ public class Collection {
     private String uid;
     private String mid;
 
-//    private Date createTime;
+    private String createTime;
 //    private String contentType;
 //    private String isDelete;
 
@@ -27,7 +26,7 @@ public class Collection {
 
     private String searchableKey;
 
-    private Date sendTime;
+    private String sendTime;
 
     public int getId() {
         return id;
@@ -53,6 +52,14 @@ public class Collection {
         this.mid = mid;
     }
 
+    public String getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(String createTime) {
+        this.createTime = createTime;
+    }
+
     public String getFrom() {
         return from;
     }
@@ -69,11 +76,11 @@ public class Collection {
         this.searchableKey = searchableKey;
     }
 
-    public Date getSendTime() {
+    public String getSendTime() {
         return sendTime;
     }
 
-    public void setSendTime(Date sendTime) {
+    public void setSendTime(String sendTime) {
         this.sendTime = sendTime;
     }
 }
