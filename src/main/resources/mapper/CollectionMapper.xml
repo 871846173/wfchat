@@ -12,14 +12,15 @@
         <result column="_create_time" property="createTime"/>
     </resultMap>
 
-    <select id="getCollectionListWithUid" parameterType="java.lang.String"
-            resultType="cn.wildfirechat.app.pojo.Collection">
-        SELECT c._mid as 'mid', c.id AS id, m._searchable_key AS 'searchableKey', m._dt AS 'sendTime', c._create_time as createTime
+    <select id="getCollectionListWithUid" resultType="cn.wildfirechat.app.pojo.Collection">
+        SELECT c._mid as 'mid', c.id AS id, m._searchable_key AS 'searchableKey', m._dt AS 'sendTime', c._create_time as 'createTime'
         FROM t_messages_6 m
         INNER JOIN t_collection c ON m._mid=c._mid
+        where 1=1
         AND c._uid=#{uid}
         AND c._is_delete='0'
         order by id desc
+        limit #{size} OFFSET #{begin}
     </select>
 
     <insert id="addCollection" parameterType="cn.wildfirechat.app.pojo.Collection">

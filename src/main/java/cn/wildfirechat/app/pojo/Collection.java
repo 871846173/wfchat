@@ -27,6 +27,8 @@ public class Collection {
     private String searchableKey;
 
     private String sendTime;
+    private Integer page;
+    private Integer size;
 
     public int getId() {
         return id;
@@ -82,5 +84,21 @@ public class Collection {
 
     public void setSendTime(String sendTime) {
         this.sendTime = sendTime;
+    }
+
+    public Integer getPage() {
+        return page;
+    }
+
+    public void setPage(Integer page) {
+        this.page = page;
+    }
+
+    public Integer getSize() {
+        return size;
+    }
+
+    public void setSize(Integer size) {
+        this.size = size;
     }
 }

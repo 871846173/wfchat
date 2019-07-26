@@ -85,7 +85,7 @@ public class Controller {
 
     @PostMapping(value = "/getCollectionListWithUid", produces = "application/json;charset=UTF-8")
     public RestResult getCollectionListWithUid(@RequestBody Collection collection) {
-        return collectionService.getCollectionListWithUid(collection.getUid());
+        return collectionService.getCollectionListWithUid(collection.getUid(), collection.getPage(), collection.getSize());
     }
 
     //修改用户添加方式（0允许1不允许）
