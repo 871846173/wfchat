@@ -2,6 +2,7 @@ package cn.wildfirechat.app;
 
 import cn.wildfirechat.app.pojo.*;
 import cn.wildfirechat.app.service.CollectionService;
+import cn.wildfirechat.app.service.FriendService;
 import cn.wildfirechat.app.service.SelectTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,6 +18,8 @@ public class Controller {
     private CollectionService collectionService;
     @Autowired
     private SelectTypeService selectTypeService;
+    @Autowired
+    private FriendService friendService;
 
     @PostMapping(value = "/send_code", produces = "application/json;charset=UTF-8")
     public Object sendCode(@RequestBody SendCodeRequest request) {
@@ -110,5 +113,11 @@ public class Controller {
     @PostMapping(value = "/selectCCode", produces = "application/json;charset=UTF-8")
     public Object selectCCode(@RequestBody SelectType selectType) {
         return selectTypeService.selectCCode(selectType.getUserId());
+    }
+
+    //删除好友
+    @PostMapping(value = "/deleteFriend", produces = "application/json;charset=UTF-8")
+    public Object deleteFriend(@RequestBody Friend friend) {
+        return friendService.deleteFriend(friend.getUserId(), friend.getFriendUid(), friend.getState());
     }
 }

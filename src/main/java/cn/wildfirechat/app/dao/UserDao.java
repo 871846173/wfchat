@@ -1,4 +1,4 @@
-package cn.wildfirechat.app;
+package cn.wildfirechat.app.dao;
 
 import cn.wildfirechat.app.pojo.User;
 import org.apache.ibatis.annotations.Mapper;

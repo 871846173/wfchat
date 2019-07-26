@@ -2,6 +2,7 @@ package cn.wildfirechat.app;
 
 
 import cn.wildfirechat.app.dao.SelectTypeDao;
+import cn.wildfirechat.app.dao.UserDao;
 import cn.wildfirechat.app.pojo.*;
 import cn.wildfirechat.app.service.SelectTypeService;
 import cn.wildfirechat.common.ErrorCode;

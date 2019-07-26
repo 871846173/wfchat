@@ -1,6 +1,7 @@
 package cn.wildfirechat.app;
 
 import cn.wildfirechat.app.dao.SelectTypeDao;
+import cn.wildfirechat.app.dao.UserDao;
 import cn.wildfirechat.app.pojo.SelectType;
 import cn.wildfirechat.app.service.SelectTypeService;
 import org.springframework.beans.factory.annotation.Autowired;

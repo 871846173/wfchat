@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.wildfirechat.app.dao.FriendDao">
+
+    <resultMap id="BaseResultMap" type="cn.wildfirechat.app.pojo.Friend">
+        <id column="id" property="id"/>
+        <result column="_uid" property="userId"/>
+        <result column="_friend_uid" property="friendUid"/>
+        <result column="_state" property="state"/>
+        <result column="_dt" property="dt"/>
+        <result column="_alias" property="alias"/>
+    </resultMap>
+
+    <update id="deleteFriend" parameterType="cn.wildfirechat.app.pojo.Collection">
+        UPDATE t_friend
+        SET _state = #{state}
+        WHERE 1=1
+        AND _uid=#{userId}
+        AND _friend_uid = #{friendUid}
+    </update>
+
+
+</mapper>
