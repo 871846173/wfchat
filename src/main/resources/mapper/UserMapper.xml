@@ -42,4 +42,20 @@
         UPDATE t_user SET _passwd_md5 = #{password} WHERE _mobile = #{mobile}
     </update>
 
+    <select id="checkUserOnline" resultType="cn.wildfirechat.app.pojo.User">
+          SELECT id , _uid as userId, online, update_time as updateTime
+          FROM t_user
+          WHERE _uid=#{userId}
+    </select>
+
+    <update id="updateUserOnline">
+        UPDATE t_user
+        SET
+        <if test="online!=null">
+            online = #{online}
+        </if>
+        update_time = now()
+        WHERE _uid = #{userId}
+    </update>
+
 </mapper>

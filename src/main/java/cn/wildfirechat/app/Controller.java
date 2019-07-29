@@ -101,7 +101,7 @@ public class Controller {
     //查询用户添加方式
     @PostMapping(value = "/selectType", produces = "application/json;charset=UTF-8")
     public Object selectType(@RequestBody SelectType selectType) {
-        return selectTypeService.selectType(selectType.getcMobile());
+        return selectTypeService.selectType(selectType.getMobile());
     }
 
     //是否根据验证码登录
@@ -119,5 +119,17 @@ public class Controller {
     @PostMapping(value = "/deleteFriend", produces = "application/json;charset=UTF-8")
     public Object deleteFriend(@RequestBody Friend friend) {
         return friendService.deleteFriend(friend.getUserId(), friend.getFriendUid(), friend.getState());
+    }
+
+    //查询用户在线状态
+    @PostMapping(value = "/checkUserOnline", produces = "application/json;charset=UTF-8")
+    public Object checkUserOnline(@RequestBody User user) {
+        return mService.checkUserOnline(user.getUserId());
+    }
+
+    //设置用户在线状态
+    @PostMapping(value = "/updateUserOnline", produces = "application/json;charset=UTF-8")
+    public Object updateUserOnline(@RequestBody User user) {
+        return mService.updateUserOnline(user.getUserId(),user.getOnline());
     }
 }

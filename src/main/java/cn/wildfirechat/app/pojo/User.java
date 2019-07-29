@@ -12,6 +12,9 @@ public class User {
     private String userId;
     private String mobile;
     private String passwdmd5;
+    private int online;
+    private String updateTime;
+    private Long timestamp;
 
     public int getId() {
         return id;
@@ -43,5 +46,29 @@ public class User {
 
     public void setPasswdmd5(String passwdmd5) {
         this.passwdmd5 = passwdmd5;
+    }
+
+    public int getOnline() {
+        return online;
+    }
+
+    public void setOnline(int online) {
+        this.online = online;
+    }
+
+    public String getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(String updateTime) {
+        this.updateTime = updateTime;
+    }
+
+    public Long getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Long timestamp) {
+        this.timestamp = timestamp;
     }
 }

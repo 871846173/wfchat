@@ -1,7 +1,7 @@
 package cn.wildfirechat.app;
 
 public class RestResult {
-    public enum  RestCode {
+    public enum RestCode {
         SUCCESS(0, "success"),
         ERROR_INVALID_MOBILE(1, "无效的电话号码"),
         ERROR_SEND_SMS_OVER_FREQUENCY(3, "请求验证码太频繁"),
@@ -12,12 +12,13 @@ public class RestResult {
         ERROR_SESSION_EXPIRED(8, "会话不存在或已过期"),
         ERROR_SESSION_NOT_VERIFIED(9, "会话没有验证"),
         ERROR_SESSION_NOT_SCANED(10, "会话没有被扫码"),
-        ERROR_CODE_PASSWORD(11, "用户密码错误或用户不存在"),
-        ERROR_INVALID_USER(12, "无效的用户"),
-        ERROR_ADD_COLLECTION(13, "添加收藏失败"),
-        ERROR_DELETE_COLLECTION(14, "删除收藏失败"),
-        ERROR_PARAMATER(15, "参数错误"),
-        ERROR_NO_COLLECTION(16, "收藏夹空空如也~");
+        ERROR_SERVER_NOT_IMPLEMENT(11, "功能没有实现"),
+        ERROR_CODE_PASSWORD(12, "用户密码错误或用户不存在"),
+        ERROR_INVALID_USER(13, "无效的用户"),
+        ERROR_ADD_COLLECTION(14, "添加收藏失败"),
+        ERROR_DELETE_COLLECTION(15, "删除收藏失败"),
+        ERROR_PARAMATER(16, "参数错误"),
+        ERROR_NO_COLLECTION(17, "收藏夹空空如也~");
 
 
         public int code;
@@ -29,6 +30,7 @@ public class RestResult {
         }
 
     }
+
     private int code;
     private String message;
     private Object result;

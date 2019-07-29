@@ -23,6 +23,9 @@ import javax.annotation.PostConstruct;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.UUID;
@@ -445,5 +448,35 @@ public class ServiceImpl implements Service {
             e.printStackTrace();
         }
         return passwdMd5;
+    }
+
+    @Override
+    public RestResult checkUserOnline(String userId) {
+
+        User user = userDao.checkUserOnline(userId);
+        if (StringUtils.isEmpty(user)) {
+            return RestResult.error(RestResult.RestCode.ERROR_INVALID_USER);
+        }
+        String time = user.getUpdateTime();
+
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date date = new Date();
+        try {
+            date = format.parse(time);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        user.setTimestamp(date.getTime());
+        return RestResult.ok(user);
+    }
+
+    @Override
+    public RestResult updateUserOnline(String userId, Integer online) {
+
+        int a = userDao.updateUserOnline(userId, online);
+        if (a >= 1) {
+            return RestResult.ok("修改用户状态成功");
+        }
+        return RestResult.error(RestResult.RestCode.ERROR_SERVER_NOT_IMPLEMENT);
     }
 }

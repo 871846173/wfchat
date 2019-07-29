@@ -20,4 +20,7 @@ public interface Service {
 
     RestResult updatePassword(String userId,String oldPassword, String newPassword);
     RestResult forgetPassword(String mobile,String code,String password);
+
+    RestResult checkUserOnline(String userId);
+    RestResult updateUserOnline(String userId, Integer online);
 }
