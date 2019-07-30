@@ -3,6 +3,7 @@ package cn.wildfirechat.app;
 import cn.wildfirechat.app.pojo.*;
 import cn.wildfirechat.app.service.CollectionService;
 import cn.wildfirechat.app.service.FriendService;
+import cn.wildfirechat.app.service.MessageService;
 import cn.wildfirechat.app.service.SelectTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,6 +21,8 @@ public class Controller {
     private SelectTypeService selectTypeService;
     @Autowired
     private FriendService friendService;
+    @Autowired
+    private MessageService messageService;
 
     @PostMapping(value = "/send_code", produces = "application/json;charset=UTF-8")
     public Object sendCode(@RequestBody SendCodeRequest request) {
@@ -137,5 +140,17 @@ public class Controller {
     @PostMapping(value = "/updateUserStealth", produces = "application/json;charset=UTF-8")
     public Object updateUserStealth(@RequestBody User user) {
         return mService.updateUserStealth(user.getUserId());
+    }
+
+    //查询消息已读、未读状态
+    @PostMapping(value = "/selectMessageRead", produces = "application/json;charset=UTF-8")
+    public Object selectMessageRead(@RequestBody Message message) {
+        return messageService.selectMessageRead(message.getMid());
+    }
+
+    //设置消息已读、未读
+    @PostMapping(value = "/updateMessageRead", produces = "application/json;charset=UTF-8")
+    public Object updateMessageRead(@RequestBody Message message) {
+        return messageService.updateMessageRead(message.getMid(), message.getRead());
     }
 }
