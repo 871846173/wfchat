@@ -6,8 +6,8 @@ import org.springframework.context.annotation.PropertySource;
 
 @Configuration
 @ConfigurationProperties(prefix = "sms")
-@PropertySource(value = "file:config/sms.properties")
-public class SMSConfig {
+@PropertySource(value = "file:config/tencent_sms.properties")
+public class TencentSMSConfig {
     String appid;
     //    String appkey;
     String serverip;
@@ -25,13 +25,8 @@ public class SMSConfig {
         this.appid = appid;
     }
 
-
     public String getTemplateId() {
         return templateId;
-    }
-
-    public void setTemplateId(String templateId) {
-        this.templateId = templateId;
     }
 
     public String getSuperCode() {
@@ -72,5 +67,9 @@ public class SMSConfig {
 
     public void setAccounttoken(String accounttoken) {
         this.accounttoken = accounttoken;
+    }
+
+    public void setTemplateId(String templateId) {
+        this.templateId = templateId;
     }
 }

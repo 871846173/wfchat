@@ -6,16 +6,17 @@ import cn.wildfirechat.app.dao.UserDao;
 import cn.wildfirechat.app.pojo.*;
 import cn.wildfirechat.app.service.SelectTypeService;
 import cn.wildfirechat.common.ErrorCode;
-import cn.wildfirechat.pojos.InputOutputUserInfo;
-import cn.wildfirechat.pojos.OutputCreateUser;
-import cn.wildfirechat.pojos.OutputGetIMTokenData;
+import cn.wildfirechat.pojos.*;
+import cn.wildfirechat.proto.ProtoConstants;
 import cn.wildfirechat.sdk.ChatConfig;
+import cn.wildfirechat.sdk.MessageAdmin;
 import cn.wildfirechat.sdk.UserAdmin;
 import cn.wildfirechat.sdk.model.IMResult;
-import com.cloopen.rest.sdk.CCPRestSDK;
+import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.StringUtils;
 import sun.misc.BASE64Encoder;
 
@@ -26,8 +27,6 @@ import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -66,16 +65,20 @@ public class ServiceImpl implements Service {
     private static ConcurrentHashMap<String, Count> mCounts = new ConcurrentHashMap<>();
 
     @Autowired
-    private SMSConfig mSMSConfig;
+    private SmsService smsService;
 
     @Autowired
     private IMConfig mIMConfig;
+
     @Autowired
     private UserDao userDao;
     @Autowired
-    private SelectTypeDao selectTypeDao;
-    @Autowired
     private SelectTypeService selectTypeService;
+    @Autowired
+    private SelectTypeDao selectTypeDao;
+
+    @Value("${sms.super_code}")
+    private String superCode;
 
     @PostConstruct
     private void init() {
@@ -84,82 +87,42 @@ public class ServiceImpl implements Service {
 
     @Override
     public RestResult sendCode(String mobile) {
-//        try {
-        if (!Utils.isMobile(mobile)) {
-            LOG.error("Not valid mobile {}", mobile);
-            return RestResult.error(RestResult.RestCode.ERROR_INVALID_MOBILE);
-        }
-
-        Record record = mRecords.get(mobile);
-        if (record != null && System.currentTimeMillis() - record.getTimestamp() < 60 * 1000) {
-            LOG.error("Send code over frequency. timestamp {}, now {}", record.getTimestamp(), System.currentTimeMillis());
-            return RestResult.error(RestResult.RestCode.ERROR_SEND_SMS_OVER_FREQUENCY);
-        }
-        Count count = mCounts.get(mobile);
-        if (count == null) {
-            count = new Count();
-            mCounts.put(mobile, count);
-        }
-
-        if (!count.increaseAndCheck()) {
-            LOG.error("Count check failure, already send {} messages today", count.count);
-            return RestResult.error(RestResult.RestCode.ERROR_SEND_SMS_OVER_FREQUENCY);
-        }
-
-        String code = Utils.getRandomCode(4);
-        String[] params = {code};
-//        new String[]{code,"5"}
-        HashMap<String, Object> result = null;
-        //初始化sdk
-        CCPRestSDK restAPI = new CCPRestSDK();
-        // 初始化服务器地址和端口，格式如下，服务器地址不需要写https://
-        restAPI.init(mSMSConfig.serverip, mSMSConfig.serverport);
-        // 初始化主帐号和主帐号TOKEN
-        restAPI.setAccount(mSMSConfig.accountsid, mSMSConfig.accounttoken);
-        // 初始化应用ID
-        restAPI.setAppId(mSMSConfig.appid);
-        //模板Id，不带此参数查询全部可用模板
-        result = restAPI.sendTemplateSMS(mobile, mSMSConfig.templateId, params);
-        System.out.println("QuerySMSTemplate result=" + result);
-        if ("000000".equals(result.get("statusCode"))) {
-            //正常返回输出data包体信息（map）
-            HashMap<String, Object> data = (HashMap<String, Object>) result.get("data");
-            Set<String> keySet = data.keySet();
-            for (String key : keySet) {
-                Object object = data.get(key);
-                System.out.println(key + " = " + object);
+        try {
+            if (!Utils.isMobile(mobile)) {
+                LOG.error("Not valid mobile {}", mobile);
+                return RestResult.error(RestResult.RestCode.ERROR_INVALID_MOBILE);
             }
-            mRecords.put(mobile, new Record(code, mobile));
-            return RestResult.ok(null);
-        } else {
-            //异常返回输出错误码和错误信息
-            System.out.println("错误码=" + result.get("statusCode") + " 错误信息= " + result.get("statusMsg"));
-            LOG.error("Failure to send SMS {}", result);
-            return RestResult.error(RestResult.RestCode.ERROR_SERVER_ERROR);
-        }
 
-        //腾讯短信平台
-//            SmsSingleSender ssender = new SmsSingleSender(mSMSConfig.appid, mSMSConfig.appkey);
-//            SmsSingleSenderResult result = ssender.sendWithParam("86", mobile,
-//                    mSMSConfig.templateId, params, null, "", "");
-//            if (result.result == 0) {
-//                mRecords.put(mobile, new Record(code, mobile));
-//                return RestResult.ok(null);
-//            } else {
-//                LOG.error("Failure to send SMS {}", result);
-//                return RestResult.error(RestResult.RestCode.ERROR_SERVER_ERROR);
-//            }
-//        } catch (HTTPException e) {
-//            // HTTP响应码错误
-//            e.printStackTrace();
-//        } catch (JSONException e) {
-//            // json解析错误
-//            e.printStackTrace();
-//        } catch (IOException e) {
-//            // 网络IO错误
-//            e.printStackTrace();
-//        }
-//        return RestResult.error(RestResult.RestCode.ERROR_SERVER_ERROR);
+            Record record = mRecords.get(mobile);
+            if (record != null && System.currentTimeMillis() - record.getTimestamp() < 60 * 1000) {
+                LOG.error("Send code over frequency. timestamp {}, now {}", record.getTimestamp(), System.currentTimeMillis());
+                return RestResult.error(RestResult.RestCode.ERROR_SEND_SMS_OVER_FREQUENCY);
+            }
+            Count count = mCounts.get(mobile);
+            if (count == null) {
+                count = new Count();
+                mCounts.put(mobile, count);
+            }
+
+            if (!count.increaseAndCheck()) {
+                LOG.error("Count check failure, already send {} messages today", count.count);
+                return RestResult.error(RestResult.RestCode.ERROR_SEND_SMS_OVER_FREQUENCY);
+            }
+
+            String code = Utils.getRandomCode(4);
+
+            RestResult.RestCode restCode = smsService.sendCode(mobile, code);
+            if (restCode == RestResult.RestCode.SUCCESS) {
+                mRecords.put(mobile, new Record(code, mobile));
+                return RestResult.ok(restCode);
+            } else {
+                return RestResult.error(restCode);
+            }
+        } catch (JSONException e) {
+            // json解析错误
+            e.printStackTrace();
+        }
+        return RestResult.error(RestResult.RestCode.ERROR_SERVER_ERROR);
     }
 
     @Override
@@ -177,7 +140,7 @@ public class ServiceImpl implements Service {
 
         if (("13900000000".equals(mobile) || "13900000001".equals(mobile)) && code.equals("556677")) {
             LOG.info("is test account");
-        } else if (StringUtils.isEmpty(mSMSConfig.superCode) || !code.equals(mSMSConfig.superCode)) {
+        } else if (StringUtils.isEmpty(superCode) || !code.equals(superCode)) {
             Record record = mRecords.get(mobile);
             if (record == null || !record.getCode().equals(code)) {
                 LOG.error("not empty or not correct");
@@ -238,6 +201,29 @@ public class ServiceImpl implements Service {
             LOG.error("Exception happens {}", e);
             return RestResult.error(RestResult.RestCode.ERROR_SERVER_ERROR);
         }
+    }
+
+    private void sendTextMessage(String toUser, String text) {
+        Conversation conversation = new Conversation();
+        conversation.setTarget(toUser);
+        conversation.setType(ProtoConstants.ConversationType.ConversationType_Private);
+        MessagePayload payload = new MessagePayload();
+        payload.setType(1);
+        payload.setSearchableContent(text);
+
+
+        try {
+            IMResult<SendMessageResult> resultSendMessage = MessageAdmin.sendMessage("admin", conversation, payload);
+            if (resultSendMessage != null && resultSendMessage.getErrorCode() == ErrorCode.ERROR_CODE_SUCCESS) {
+                LOG.info("send message success");
+            } else {
+                LOG.error("send message error {}", resultSendMessage != null ? resultSendMessage.getErrorCode().code : "unknown");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            LOG.error("send message error {}", e.getLocalizedMessage());
+        }
+
     }
 
 
@@ -334,7 +320,7 @@ public class ServiceImpl implements Service {
     public RestResult loginByPassword(String mobile, String password, String clientId) {
         if (("13900000000".equals(mobile) || "13900000001".equals(mobile))) {
             LOG.info("is test account");
-        } else if (StringUtils.isEmpty(mSMSConfig.superCode)) {
+        } else if (StringUtils.isEmpty(superCode)) {
             Record record = mRecords.get(mobile);
             if (record == null) {
                 LOG.error("not empty or not correct");
@@ -476,6 +462,28 @@ public class ServiceImpl implements Service {
         int a = userDao.updateUserOnline(userId, online);
         if (a >= 1) {
             return RestResult.ok("修改用户状态成功");
+        }
+        return RestResult.error(RestResult.RestCode.ERROR_SERVER_NOT_IMPLEMENT);
+    }
+
+    @Override
+    public RestResult updateUserStealth(String userId) {
+
+        User user = userDao.checkUserOnline(userId);
+        if (StringUtils.isEmpty(user)) {
+            return RestResult.error(RestResult.RestCode.ERROR_INVALID_USER);
+        }
+        if (user.getOnline() == 0) {
+            int a = userDao.updateUserOnline(userId, 2);
+            if (a >= 1) {
+                return RestResult.ok("用户隐身成功");
+            }
+        }
+        if (user.getOnline() == 2) {
+            int a = userDao.updateUserOnline(userId, 0);
+            if (a >= 1) {
+                return RestResult.ok("用户取消隐身");
+            }
         }
         return RestResult.error(RestResult.RestCode.ERROR_SERVER_NOT_IMPLEMENT);
     }

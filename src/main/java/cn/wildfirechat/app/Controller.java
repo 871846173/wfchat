@@ -130,6 +130,12 @@ public class Controller {
     //设置用户在线状态
     @PostMapping(value = "/updateUserOnline", produces = "application/json;charset=UTF-8")
     public Object updateUserOnline(@RequestBody User user) {
-        return mService.updateUserOnline(user.getUserId(),user.getOnline());
+        return mService.updateUserOnline(user.getUserId(), user.getOnline());
+    }
+
+    //设置用户隐身模式
+    @PostMapping(value = "/updateUserStealth", produces = "application/json;charset=UTF-8")
+    public Object updateUserStealth(@RequestBody User user) {
+        return mService.updateUserStealth(user.getUserId());
     }
 }

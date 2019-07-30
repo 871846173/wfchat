@@ -1,6 +1,7 @@
 //package cn.wildfirechat.app;
 //
 //import cn.wildfirechat.app.dao.SelectTypeDao;
+//import cn.wildfirechat.app.dao.UserDao;
 //import cn.wildfirechat.app.pojo.SelectType;
 //import cn.wildfirechat.app.pojo.User;
 //import cn.wildfirechat.app.service.SelectTypeService;
@@ -59,6 +60,13 @@
 //    public void selectType() {
 //
 //        RestResult restResult = selectTypeService.selectType("2");
+//        System.out.println(restResult);
+//    }
+//
+//    @Test
+//    public void checkUserOnline() {
+//
+//        RestResult restResult = serviceImpl.checkUserOnline("admin");
 //        System.out.println(restResult);
 //    }
 //}
