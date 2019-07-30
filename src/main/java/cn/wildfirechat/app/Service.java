@@ -26,7 +26,7 @@ public interface Service {
 
     RestResult forgetPassword(String mobile, String code, String password);
 
-    RestResult checkUserOnline(String userId);
+    RestResult checkUserOnline(String userId,String selfId);
 
     RestResult updateUserOnline(String userId, Integer online);
 

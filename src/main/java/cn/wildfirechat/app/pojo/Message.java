@@ -12,7 +12,7 @@ public class Message {
     @Id
     @Column(name = "id")
     private int id;
-    private int mid;
+    private String mid;
     private String from;
     private int type;
     private String target;
@@ -31,11 +31,11 @@ public class Message {
         this.id = id;
     }
 
-    public int getMid() {
+    public String getMid() {
         return mid;
     }
 
-    public void setMid(int mid) {
+    public void setMid(String mid) {
         this.mid = mid;
     }
 

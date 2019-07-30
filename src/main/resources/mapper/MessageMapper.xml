@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.wildfirechat.app.dao.MessageDao">
+    <!--    C:\Users\Administrator\IdeaProjects\im-app_server\src\main\java\cn\wildfirechat\dao\UserDao.java-->
+
+    <!--    <insert id="insert"   parameterType="UserPO"   >-->
+    <!--           insert into user(name,password,age,sex)-->
+    <!--           values(#{name},#{password},#{age},#{sex})-->
+    <!--    </insert>-->
+    <resultMap id="BaseResultMap" type="cn.wildfirechat.app.pojo.Message">
+
+        <result column="_mid" property="mid" jdbcType="VARCHAR"/>
+        <result column="read" property="read" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <update id="updateMessageRead" >
+        UPDATE t_messages_6 SET t_messages_6.read=0
+         WHERE  _from=#{selfId} AND _target=#{userId} AND t_messages_6.read=1
+    </update>
+
+    <select id="selectMessageRead" resultType="cn.wildfirechat.app.pojo.Message">
+            SELECT  t_messages_6.read as 'read' FROM t_messages_6
+             WHERE t_messages_6._mid=#{mid}
+    </select>
+
+
+
+</mapper>

@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpSession;
+
 @RestController
 public class Controller {
     @Autowired
@@ -127,7 +129,7 @@ public class Controller {
     //查询用户在线状态
     @PostMapping(value = "/checkUserOnline", produces = "application/json;charset=UTF-8")
     public Object checkUserOnline(@RequestBody User user) {
-        return mService.checkUserOnline(user.getUserId());
+        return mService.checkUserOnline(user.getUserId(),user.getSelfId());
     }
 
     //设置用户在线状态
@@ -151,6 +153,6 @@ public class Controller {
     //设置消息已读、未读
     @PostMapping(value = "/updateMessageRead", produces = "application/json;charset=UTF-8")
     public Object updateMessageRead(@RequestBody Message message) {
-        return messageService.updateMessageRead(message.getMid(), message.getRead());
+        return messageService.updateMessageRead(message.getTarget(), message.getFrom());
     }
 }

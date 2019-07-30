@@ -21,6 +21,7 @@ import org.springframework.util.StringUtils;
 import sun.misc.BASE64Encoder;
 
 import javax.annotation.PostConstruct;
+import javax.servlet.http.HttpSession;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -129,6 +130,7 @@ public class ServiceImpl implements Service {
     public RestResult login(String mobile, String code, String clientId) {
         boolean allowCode = true;
         String userId = userDao.selectUserId(mobile);
+//        session1.setAttribute("selfId",userId);
         SelectType selectType = selectTypeDao.selectType(userId);
 
         if (selectType != null && selectType.getcCode().equals("1")) {
@@ -166,6 +168,7 @@ public class ServiceImpl implements Service {
                 user.setDisplayName(mobile);
                 user.setMobile(mobile);
                 IMResult<OutputCreateUser> userIdResult = UserAdmin.createUser(user);
+
                 //创建用户允许添加方式
                 selectTypeService.createSelectType(userIdResult.getResult().getUserId());
                 if (userIdResult.getErrorCode() == ErrorCode.ERROR_CODE_SUCCESS) {
@@ -437,9 +440,12 @@ public class ServiceImpl implements Service {
     }
 
     @Override
-    public RestResult checkUserOnline(String userId) {
+    public RestResult checkUserOnline(String userId,String selfId) {
 
         User user = userDao.checkUserOnline(userId);
+        User userSelf=userDao.checkUserOnline(selfId);
+        int selfOnlineStatus=userSelf.getOnline();
+
         if (StringUtils.isEmpty(user)) {
             return RestResult.error(RestResult.RestCode.ERROR_INVALID_USER);
         }
@@ -453,12 +459,20 @@ public class ServiceImpl implements Service {
             e.printStackTrace();
         }
         user.setTimestamp(date.getTime());
+        if(selfOnlineStatus==2){
+            user.setOnline(2);
+        }
+
         return RestResult.ok(user);
     }
 
     @Override
     public RestResult updateUserOnline(String userId, Integer online) {
+        User user = userDao.checkUserOnline(userId);
 
+        if(user.getOnline()==2){
+            return  RestResult.ok("隐身不能设置该状态");
+        }
         int a = userDao.updateUserOnline(userId, online);
         if (a >= 1) {
             return RestResult.ok("修改用户状态成功");

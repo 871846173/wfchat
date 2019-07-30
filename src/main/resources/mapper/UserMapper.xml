@@ -52,7 +52,7 @@
         UPDATE t_user
         SET
         <if test="online!=null">
-            online = #{online}
+            online = #{online},
         </if>
         update_time = now()
         WHERE _uid = #{userId}

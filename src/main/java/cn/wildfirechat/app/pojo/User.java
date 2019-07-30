@@ -15,6 +15,15 @@ public class User {
     private int online;
     private String updateTime;
     private Long timestamp;
+    private String selfId;
+
+    public String getSelfId() {
+        return selfId;
+    }
+
+    public void setSelfId(String selfId) {
+        this.selfId = selfId;
+    }
 
     public int getId() {
         return id;
