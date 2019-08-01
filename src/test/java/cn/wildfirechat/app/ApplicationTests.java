@@ -1,9 +1,11 @@
 //package cn.wildfirechat.app;
 //
+//import cn.wildfirechat.app.dao.MessageDao;
 //import cn.wildfirechat.app.dao.SelectTypeDao;
 //import cn.wildfirechat.app.dao.UserDao;
 //import cn.wildfirechat.app.pojo.SelectType;
 //import cn.wildfirechat.app.pojo.User;
+//import cn.wildfirechat.app.service.MessageService;
 //import cn.wildfirechat.app.service.SelectTypeService;
 //import org.junit.Test;
 //import org.junit.runner.RunWith;
@@ -27,6 +29,13 @@
 //    private SelectTypeService selectTypeService;
 //    @Autowired
 //    private SelectTypeDao selectTypeDao;
+//
+//    @Autowired
+//    private MessageService messageService;
+//
+//    @Autowired
+//    private MessageDao dao;
+//
 //
 //    @Test
 //    public void contextLoads() {
@@ -66,7 +75,13 @@
 //    @Test
 //    public void checkUserOnline() {
 //
-//        RestResult restResult = serviceImpl.checkUserOnline("admin");
-//        System.out.println(restResult);
+////        RestResult restResult = serviceImpl.checkUserOnline("admin");
+////        System.out.println(restResult);
+////        messageService.updateMessageRead("aca4a4oo","rsrTrTee");
+////        System.out.println(dao.findNoReadCount("aca4a4oo","rsrTrTee"));
+////            dao.deleteMessage("102869680737255426");
+////      System.out.println(messageService.selectMessageRead("102306352275161089"));
+////        messageService.deleteMessage("102995878091980806",10);
+//        messageService.updateMessageRead("aca4a4oo","rsrTrTee");
 //    }
 //}

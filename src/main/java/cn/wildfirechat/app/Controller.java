@@ -153,6 +153,16 @@ public class Controller {
     //设置消息已读、未读
     @PostMapping(value = "/updateMessageRead", produces = "application/json;charset=UTF-8")
     public Object updateMessageRead(@RequestBody Message message) {
-        return messageService.updateMessageRead(message.getTarget(), message.getFrom());
+        return messageService.updateMessageRead(message.getSelfId(),message.getUserId());
+    }
+
+    @PostMapping(value = "/findNoReadCount", produces = "application/json;charset=UTF-8")
+    public Object findNoReadCount(@RequestBody Message message) {
+        return messageService.findNoReadCount(message.getSelfId(),message.getUserId());
+    }
+
+    @PostMapping(value = "/deleteMessage", produces = "application/json;charset=UTF-8")
+    public Object deleteMessage(@RequestBody Message message) {
+        return messageService.deleteMessage(message.getMid(),message.getTime());
     }
 }

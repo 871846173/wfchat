@@ -13,9 +13,9 @@
         <result column="_mid" property="mid" jdbcType="VARCHAR"/>
         <result column="read" property="read" jdbcType="INTEGER"/>
     </resultMap>
-
-    <update id="updateMessageRead" >
-        UPDATE t_messages_6 SET t_messages_6.read=0
+    <!--    将这条消息设置为已读  -->
+    <update id="updateMessageRead">
+        UPDATE t_messages_6 SET t_messages_6.read=0,t_messages_6.read_time=now()
          WHERE  _from=#{selfId} AND _target=#{userId} AND t_messages_6.read=1
     </update>
 
@@ -24,6 +24,26 @@
              WHERE t_messages_6._mid=#{mid}
     </select>
 
+    <select id="findNoReadCount" resultType="java.lang.Integer">
+            SELECT  count(*) as c FROM t_messages_6
+                WHERE  _from=#{selfId} AND _target=#{userId} AND t_messages_6.read=1
+    </select>
+    <delete id="deleteMessage">
+        DELETE FROM t_messages_6 WHERE t_messages_6._mid=#{mId} AND t_messages_6.read=0
+    </delete>
+    <!--   取出某两个人的所有未读消息-->
+    <select id="selectNoReadMessage" resultType="cn.wildfirechat.app.pojo.Message">
+            SELECT  t_messages_6._mid as 'mid',t_messages_6._from as 'from',t_messages_6._target as target, t_messages_6.read_time as readTime FROM t_messages_6
+               WHERE  _from=#{selfId} AND _target=#{userId} AND t_messages_6.read=1
+    </select>
 
+    <update id="onReadDestroy">
+        UPDATE t_messages_6 SET t_messages_6.read_destroy=1
+            WHERE t_messages_6._dt>=#{time} and  _from=#{selfId} AND _target=#{userId}
+    </update>
 
+    <update id="setRead">
+        UPDATE t_messages_6 SET t_messages_6.read=0,t_messages_6.read_time=now()
+         WHERE t_messages_6._mid=#{mid}
+    </update>
 </mapper>

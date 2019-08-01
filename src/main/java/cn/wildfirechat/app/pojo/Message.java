@@ -22,7 +22,35 @@ public class Message {
     private String dt;
     private int contentType;
     private int read;
+    private String userId;
+    private int  time;
+    private String readTime;
 
+    public String getReadTime() {
+        return readTime;
+    }
+
+    public void setReadTime(String readTime) {
+        this.readTime = readTime;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public String getSelfId() {
+        return selfId;
+    }
+
+    public void setSelfId(String selfId) {
+        this.selfId = selfId;
+    }
+
+    private String selfId;
     public int getId() {
         return id;
     }
@@ -109,5 +137,13 @@ public class Message {
 
     public void setRead(int read) {
         this.read = read;
+    }
+
+    public int getTime() {
+        return time;
+    }
+
+    public void setTime(int time) {
+        this.time = time;
     }
 }
